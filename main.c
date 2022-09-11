@@ -6,8 +6,9 @@ TColaCP crear cola cp(int (*f)(TEntrada, TEntrada)){
 
     return cola;
 }
-private int f(TEntrada, TEntrada){
-
+private int f(TEntrada arg1, TEntrada arg2){
+    if(arg1.clave>)
+    return -1;
 }
 
 typedef struct cola_con_prioridad {
