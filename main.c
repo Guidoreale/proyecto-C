@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#define SIZE 2000
 
 TColaCP crear cola cp(int (*f)(TEntrada, TEntrada)){
     TColaCP cola = NULL;
@@ -33,9 +35,50 @@ typedef void * TValor;
 
 
 
+void f(char *file1){
 
-int main()
+    char buffer[SIZE];
+    FILE *archivo1 = fopen(file1,"r");
+    int encontre = 0;
+    char ch;
+    char cadena[SIZE];
+    int i = 0;
+    int entero = 0;
+    if(!archivo1){
+        printf("Error al abrir el archivo\n");
+    }
+
+    else{
+
+        while(!encontre &&(ch = fgetc(archivo1))!= EOF){
+
+            if(ch != ';' ){
+                cadena[i]= ch;
+                i++;
+                }
+            if (ch==';')
+                encontre = 1;
+        }
+        sscanf(cadena, "%d", &entero);
+        printf("%i",entero);
+        if (!encontre)
+            printf("NO encontramos %s",buffer);
+
+        fclose(archivo1);
+    }
+
+    }
+
+
+
+int main(int argc,char *args[])
 {
-    printf("Hello world!\n");
+    if (argc==2){
+        f(args[1]);
+    }
+    else{
+        printf("error en args\n");
+    }
+
     return 0;
 }
