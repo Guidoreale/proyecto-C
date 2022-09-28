@@ -30,13 +30,6 @@ TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
     return nuevaCola;
 }
 
- void intercambio(TNodo a, TNodo b){
-            int temp = a->entrada;
-            a->entrada = b->entrada;
-            b->entrada = temp;
-        }
-
-
 
 int f(TEntrada a, TEntrada b){
     int valor = 0;
@@ -46,6 +39,7 @@ int f(TEntrada a, TEntrada b){
        valor = 1;
     else
         valor = 0;
+    return valor;
     }
 
 
