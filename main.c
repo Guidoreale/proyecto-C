@@ -38,14 +38,16 @@ TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
 
 
 
-void f(TNodo nodo){
-    if(nodo->padre != NULL){
-        if(nodo->padre->entrada > nodo->padre->entrada){
-            intercambio(nodo->padre, nodo);
-            f(nodo->padre);
-            }
+int f(TEntrada a, TEntrada b){
+    int valor = 0;
+    if(a->clave > b->clave)
+       valor = -1;
+    else if (b->clave > a->clave)
+       valor = 1;
+    else
+        valor = 0;
     }
-}
+
 
 
 
