@@ -30,9 +30,23 @@ TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
     return nuevaCola;
 }
 
- int f(TEntrada arg1, TEntrada arg2){
-    return -1;
+ void intercambio(TNodo a, TNodo b){
+            int temp = a->entrada;
+            a->entrada = b->entrada;
+            b->entrada = temp;
+        }
+
+
+
+void f(TNodo nodo){
+    if(nodo->padre != NULL){
+        if(nodo->padre->entrada > nodo->padre->entrada){
+            intercambio(nodo->padre, nodo);
+            f(nodo->padre);
+            }
+    }
 }
+
 
 
 int main()
