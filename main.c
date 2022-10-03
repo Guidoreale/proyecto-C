@@ -50,8 +50,7 @@ int f(TEntrada a, TEntrada b){
     } 
 
    int logCasero(int numero){
-      int ret;
-      ret = (int)log(numero);
+      int ret = (int)log(numero);
       return ret;
    }
 
@@ -64,7 +63,7 @@ int f(TEntrada a, TEntrada b){
         TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
         nuevo->entrada = aInsertar;
         (*temp)->hijo_izquierdo = nuevo;
-        nuevo->padre = temp;
+        nuevo->padre = (*temp);
         cola->cantidad_elementos++;
         //¿es correcto el usp del puntero, tendriamos que usar malloc y free?
     }
