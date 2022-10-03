@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define FALSE 0;
+#define TRUE 1;
+#define CCP_NO_INI 2;
+#define POS_NULA NULL;
+#define ELE_NULO NULL;
+
 typedef void * TClave;
 typedef void * TValor;
 
@@ -105,22 +111,19 @@ int insertar(TColaCP cola, TEntrada aInsertar){
         aRetornar = 1;
     }
     else
-        if (cola->cantidad_elementos == 2^((logCasero(cola->cantidad_elementos)/logCasero(2)+1))-1)
-            {
+        if (cola->cantidad_elementos == 2^((logCasero(cola->cantidad_elementos)/logCasero(2)+1))-1){
                 insertarPerfecto(aInsertar,cola);
-            }
-        else if ((logCasero(cola->cantidad_elementos)/logCasero(2)) == 0)
-            if (cola->raiz->hijo_izquierdo == NULL){
+        }
+        else 
+            if ((logCasero(cola->cantidad_elementos)/logCasero(2)) == 0){
                 TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
                 nuevo->entrada = aInsertar;
                 cola ->raiz->hijo_izquierdo = nuevo;
                 nuevo->padre = cola->raiz;
                 aRetornar = 1;
             }
-            
-            
-        else
-            aRetornar = buscar(1,aInsertar, cola->raiz,cola);  
+            else
+                aRetornar = buscar(1,aInsertar, cola->raiz,cola);  
 
     return aRetornar;
 }

@@ -1,18 +1,3 @@
-<<<<<<< HEAD
 /bin
 /obj
-=======
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
-
-# Local History for Visual Studio Code
-.history/
-
-# Built Visual Studio Code Extensions
-*.vsix
->>>>>>> fb807d50d8c1e620ec1fea3509a5e8a7bfbecb80
 /.vscode
