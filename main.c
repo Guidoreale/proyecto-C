@@ -111,7 +111,7 @@ int insertar(TColaCP cola, TEntrada aInsertar){
         aRetornar = 1;
     }
     else
-        if (cola->cantidad_elementos == 2^((logCasero(cola->cantidad_elementos)/logCasero(2)+1))-1){
+        if (cola->cantidad_elementos == 2^((logCasero(cola->cantidad_elementos)/logCasero(2) + 1)) -1){
                 insertarPerfecto(aInsertar,cola);
         }
         else 
