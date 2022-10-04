@@ -60,6 +60,26 @@ int f(TEntrada a, TEntrada b){
       return ret;
    }
 
+    void reacomodarI(TNodo nodo, TColaCP cola){
+    
+    }
+
+   TEntrada cp_eliminar(TColaCP cola){
+        TEntrada entrada;
+        if (cola == NULL){
+            entrada = ELE_NULO;
+        }
+        else{
+            entrada = cola->raiz->entrada;
+            if (cola->raiz->hijo_derecho->entrada->clave > cola->raiz->hijo_izquierdo->entrada->clave){
+                cola->raiz = NULL;
+                reacomodar(cola->raiz->hijo_izquierdo, cola);
+            }
+        }
+
+        return entrada;
+   }
+
     int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
         TNodo *temp;
         temp = &cola->raiz;
