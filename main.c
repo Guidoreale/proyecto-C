@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define FALSE 0;
 #define TRUE 1;
@@ -53,31 +54,33 @@ int f(TEntrada a, TEntrada b){
 
     int cp_cantidad(TColaCP cola){
         return cola->cantidad_elementos;
-    } 
+    }
 
    int logCasero(int numero){
-      int ret = (int)log(numero);
+      int ret = log(numero)/log(2);
+      printf("%d \n", ret);
       return ret;
    }
 
     int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
-        TNodo *temp;
-        temp = &cola->raiz;
-        while((*temp)->hijo_izquierdo != NULL){
-            temp = (*temp)->hijo_izquierdo;
+        TNodo temp; //TNodo ya es un puntero, por lo tento no deberiamos usar *temp sino temp.
+        temp = cola->raiz;
+        while(temp->hijo_izquierdo != NULL){
+            temp = temp->hijo_izquierdo;
         }
         TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
         nuevo->entrada = aInsertar;
-        (*temp)->hijo_izquierdo = nuevo;
-        nuevo->padre = (*temp);
+        temp->hijo_izquierdo = nuevo;
+        nuevo->padre = temp;
         cola->cantidad_elementos++;
         //¿es correcto el usp del puntero, tendriamos que usar malloc y free?
     }
 
     int buscar(int contador, TEntrada aInsertar, TNodo nodo , TColaCP cola){
+        printf("estoy dentro de buscar y la cantidad de elementos actuales de la cola es: %d \n", cola->cantidad_elementos);
         int cont = contador; // empieza en 1, la vuelta del derecho entra con cont = 2
         int retorno = 0;
-        if (cont < (logCasero(cola->cantidad_elementos)/logCasero(2)) -1){
+        if (cont < logCasero(cola->cantidad_elementos) -1){
             cont++;
             retorno = buscar(cont,aInsertar,nodo->hijo_izquierdo,cola);
             if (!retorno)
@@ -88,6 +91,7 @@ int f(TEntrada a, TEntrada b){
                 TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
                 nuevo->entrada = aInsertar;
                 nodo->hijo_izquierdo = nuevo;
+                cola->cantidad_elementos++;
                 retorno = 1;
             }
             else
@@ -95,8 +99,9 @@ int f(TEntrada a, TEntrada b){
                     TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
                     nuevo->entrada = aInsertar;
                     nodo->hijo_derecho = nuevo;
+                    cola->cantidad_elementos++;
                     retorno = 1;
-                }       
+                }
     return retorno;
 }
 
@@ -106,45 +111,112 @@ int insertar(TColaCP cola, TEntrada aInsertar){
         TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
         nuevo->entrada = aInsertar;
         cola ->raiz = nuevo;
-        nuevo->padre = NULL;
+        cola->raiz->padre = NULL;
         cola ->cantidad_elementos++;
         aRetornar = 1;
     }
     else
-        if (cola->cantidad_elementos == 2^((logCasero(cola->cantidad_elementos)/logCasero(2) + 1)) -1){
+        if (cola->cantidad_elementos == 2^((logCasero(cola->cantidad_elementos) + 1)) -1){
                 insertarPerfecto(aInsertar,cola);
         }
-        else 
-            if ((logCasero(cola->cantidad_elementos)/logCasero(2)) == 0){
+        else
+            if ((cola->cantidad_elementos) == 1){
                 TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
                 nuevo->entrada = aInsertar;
                 cola ->raiz->hijo_izquierdo = nuevo;
                 nuevo->padre = cola->raiz;
+                cola->cantidad_elementos++;
                 aRetornar = 1;
             }
             else
-                aRetornar = buscar(1,aInsertar, cola->raiz,cola);  
+                aRetornar = buscar(1,aInsertar, cola->raiz,cola);
 
     return aRetornar;
 }
 
-
+int printearPreorden(TColaCP cola, TNodo raiz){
+        printf("valor = %d \n", (raiz->entrada)->valor);
+        if (raiz->hijo_izquierdo != NULL)
+            printearPreorden(cola, raiz->hijo_izquierdo);
+        if (raiz->hijo_derecho != NULL)
+            printearPreorden(cola, raiz->hijo_derecho);
+    return 1;
+    }
 
 
 
 int main()
 {
-    TColaCP cola = crearCola(f);    
-    TEntrada entr;
-    entr->clave = (TClave) 1;
-    entr->valor = (TValor) 3;
-    insertar(cola, entr);
 
+    printf("si logCasero() anda correctamente esto deberia mostrar 2: %d \n", logCasero(4));
+    printf("si logCasero() anda correctamente esto deberia mostrar 2: %d \n", logCasero(6));
+    printf("si logCasero() anda correctamente esto deberia mostrar 3: %d \n", logCasero(9));
+    printf("si logCasero() anda correctamente esto deberia mostrar 4: %d \n", logCasero(17));
+    printf("si logCasero() anda correctamente esto deberia mostrar 5: %d \n", logCasero(33));
+    printf("\n logcasero no es el problema, por lo tanto el problema esta en el incremento de \n la cantidad de elementos cuando se realiza la insercion.\n \n estos 0..1 que siguen corresponden a la consulta de logCasero cada vez que se quiere realizar la insercion.\n por lo tanto no se esta aumentando la cantidad de elementos de la cola \n");
+    printf("\n inserta solo 2 nodos, el primero y el segundo(casos base), luego no entra al algoritmo buscar correctamente \n y deja de insertar\n");
 
+    TColaCP cola = crearCola(f);
+    TEntrada arreglo[8];
+    TEntrada entr1 = (TEntrada) malloc(sizeof(struct entrada));
+    TClave c1 = (TClave) 1;
+    TValor v1 = (TValor) 2;
+    entr1->clave = c1;
+    entr1->valor = v1;
+    arreglo[0] = entr1;
 
-   for(int i=0; i<4; i++){
-        printf("cola %i: \n", cola->raiz);
-        }
+    TEntrada entr2 = (TEntrada) malloc(sizeof(struct entrada));
+    TClave c2 = (TClave) 3;
+    TValor v2 = (TValor) 4;
+    entr2->clave = c2;
+    entr2->valor = v2;
+    arreglo[1] = entr2;
 
+    TEntrada entr3 = (TEntrada) malloc(sizeof(struct entrada));
+    TClave c3 = (TClave) 5;
+    TValor v3 = (TValor) 6;
+    entr3->clave = c3;
+    entr3->valor = v3;
+    arreglo[2] = entr3;
+
+    TEntrada entr4 = (TEntrada) malloc(sizeof(struct entrada));
+    TClave c4 = (TClave) 7;
+    TValor v4 = (TValor) 8;
+    entr4->clave = c4;
+    entr4->valor = v4;
+    arreglo[3] = entr4;
+
+    TEntrada entr5 = (TEntrada) malloc(sizeof(struct entrada));
+    TClave c5 = (TClave) 9;
+    TValor v5 = (TValor) 10;
+    entr5->clave = c5;
+    entr5->valor = v5;
+    arreglo[4] = entr5;
+
+    TEntrada entr6 = (TEntrada) malloc(sizeof(struct entrada));
+    TClave c6 = (TClave) 11;
+    TValor v6 = (TValor) 12;
+    entr6->clave = c6;
+    entr6->valor = v6;
+    arreglo[5] = entr6;
+
+    TEntrada entr7 = (TEntrada) malloc(sizeof(struct entrada));
+    TClave c7 = (TClave) 13;
+    TValor v7 = (TValor) 14;
+    entr7->clave = c7;
+    entr7->valor = v7;
+    arreglo[6] = entr7;
+
+    TEntrada entr8 = (TEntrada) malloc(sizeof(struct entrada));
+    TClave c8 = (TClave) 15;
+    TValor v8 = (TValor) 16;
+    entr8->clave = c8;
+    entr8->valor = v8;
+    arreglo[7] = entr8;
+
+    for(int i = 0; i < 8; i++){
+        insertar(cola, arreglo[i]);
+    }
+   printearPreorden(cola, cola->raiz);
     return 0;
 }

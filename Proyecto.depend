@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1664953583 source:c:\users\guido\desktop\proyecto1-c\proyecto-orga\main.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+
