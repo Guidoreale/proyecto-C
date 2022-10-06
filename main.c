@@ -32,6 +32,8 @@ typedef struct cola_con_prioridad {
 
 TNodo crear_nodo(TEntrada aInsertar, TNodo padre);
 
+void reacomodar(struct nodo *pNodo, TColaCP pPrioridad);
+
 TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
     TColaCP nuevaCola = (TColaCP) malloc(sizeof(struct cola_con_prioridad));
     nuevaCola ->cantidad_elementos = 0;
@@ -62,24 +64,30 @@ int f(TEntrada a, TEntrada b){
       return ret;
    }
 
-/*
+
    TEntrada cp_eliminar(TColaCP cola){
         TEntrada entrada;
         if (cola == NULL){
             entrada = ELE_NULO;
         }
-        else{
+        else if (cola->cantidad_elementos==1) {
             entrada = cola->raiz->entrada;
-            if (cola->raiz->hijo_derecho->entrada->clave > cola->raiz->hijo_izquierdo->entrada->clave){
-                cola->raiz = NULL;
-                reacomodar(cola->raiz->hijo_izquierdo, cola);
-            }
+            cola->raiz->entrada = ELE_NULO;
+            cola->raiz = POS_NULA;
         }
+        else if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
+            reacomodar(cola->raiz->hijo_izquierdo, cola);
+            }
+
 
         return entrada;
    }
-    */
-    int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
+
+void reacomodar(TNodo nodo , TColaCP pPrioridad) {
+
+}
+
+int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
         TNodo temp; //TNodo ya es un puntero, por lo tento no deberiamos usar *temp sino temp.
         temp = cola->raiz;
         while(temp->hijo_izquierdo != NULL){
@@ -146,18 +154,7 @@ int insertar(TColaCP cola, TEntrada aInsertar){
     else
         if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
                 insertarPerfecto(aInsertar,cola);
-        }/*
-        else
-            if ((cola->cantidad_elementos) == 1){
-                TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
-                nuevo->entrada = aInsertar;
-                cola ->raiz->hijo_izquierdo = nuevo;
-                nuevo->padre = cola->raiz;
-                cola->cantidad_elementos++;
-                aRetornar = 1;
-                nuevo->hijo_derecho = NULL;
-                nuevo->hijo_izquierdo = NULL;
-            }*/
+        }
             else
                 aRetornar = buscar(1,aInsertar, cola->raiz,cola);
 
