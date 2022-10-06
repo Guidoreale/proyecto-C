@@ -30,7 +30,7 @@ typedef struct cola_con_prioridad {
 } * TColaCP;
 
 
-
+TNodo crear_nodo(TEntrada aInsertar, TNodo padre);
 
 TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
     TColaCP nuevaCola = (TColaCP) malloc(sizeof(struct cola_con_prioridad));
@@ -56,16 +56,13 @@ int f(TEntrada a, TEntrada b){
         return cola->cantidad_elementos;
     }
 
-   int logCasero(int numero){
+   int logaritmo(int numero){
       int ret = log(numero)/log(2);
       printf("%d \n", ret);
       return ret;
    }
 
-    void reacomodarI(TNodo nodo, TColaCP cola){
-    
-    }
-
+/*
    TEntrada cp_eliminar(TColaCP cola){
         TEntrada entrada;
         if (cola == NULL){
@@ -81,7 +78,7 @@ int f(TEntrada a, TEntrada b){
 
         return entrada;
    }
-
+    */
     int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
         TNodo temp; //TNodo ya es un puntero, por lo tento no deberiamos usar *temp sino temp.
         temp = cola->raiz;
@@ -93,16 +90,18 @@ int f(TEntrada a, TEntrada b){
         temp->hijo_izquierdo = nuevo;
         nuevo->padre = temp;
         cola->cantidad_elementos++;
-        //¿es correcto el usp del puntero, tendriamos que usar malloc y free?
-    }
+        nuevo->hijo_derecho = NULL;
+        nuevo->hijo_izquierdo = NULL;
+        return 1;
+}
 
     int buscar(int contador, TEntrada aInsertar, TNodo nodo , TColaCP cola){
         printf("estoy dentro de buscar y la cantidad de elementos actuales de la cola es: %d \n", cola->cantidad_elementos);
         int cont = contador; // empieza en 1, la vuelta del derecho entra con cont = 2
         int retorno = 0;
-        if (cont < logCasero(cola->cantidad_elementos) -1){
-            cont++;
-            retorno = buscar(cont,aInsertar,nodo->hijo_izquierdo,cola);
+        if (nivel_actual < logaritmo(cola->cantidad_elementos)){
+            nivel_actual++;
+            retorno = buscar(nivel_actual, aInsertar, nodo->hijo_izquierdo, cola);
             if (!retorno)
                 buscar(cont,aInsertar, nodo->hijo_derecho, cola);
         }
@@ -125,6 +124,13 @@ int f(TEntrada a, TEntrada b){
     return retorno;
 }
 
+TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
+    TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
+    nuevo->entrada = aInsertar;
+    nuevo->hijo_derecho = NULL;
+    nuevo->hijo_izquierdo = NULL;
+}
+
 int insertar(TColaCP cola, TEntrada aInsertar){
     int aRetornar = 0;
     if (cola-> cantidad_elementos == 0){
@@ -134,11 +140,13 @@ int insertar(TColaCP cola, TEntrada aInsertar){
         cola->raiz->padre = NULL;
         cola ->cantidad_elementos++;
         aRetornar = 1;
+        nuevo->hijo_derecho = NULL;
+        nuevo->hijo_izquierdo = NULL;
     }
     else
-        if (cola->cantidad_elementos == 2^((logCasero(cola->cantidad_elementos) + 1)) -1){
+        if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
                 insertarPerfecto(aInsertar,cola);
-        }
+        }/*
         else
             if ((cola->cantidad_elementos) == 1){
                 TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
@@ -147,7 +155,9 @@ int insertar(TColaCP cola, TEntrada aInsertar){
                 nuevo->padre = cola->raiz;
                 cola->cantidad_elementos++;
                 aRetornar = 1;
-            }
+                nuevo->hijo_derecho = NULL;
+                nuevo->hijo_izquierdo = NULL;
+            }*/
             else
                 aRetornar = buscar(1,aInsertar, cola->raiz,cola);
 
@@ -167,13 +177,15 @@ int printearPreorden(TColaCP cola, TNodo raiz){
 
 int main()
 {
+    miniTester();
 
-    printf("si logCasero() anda correctamente esto deberia mostrar 2: %d \n", logCasero(4));
-    printf("si logCasero() anda correctamente esto deberia mostrar 2: %d \n", logCasero(6));
-    printf("si logCasero() anda correctamente esto deberia mostrar 3: %d \n", logCasero(9));
-    printf("si logCasero() anda correctamente esto deberia mostrar 4: %d \n", logCasero(17));
-    printf("si logCasero() anda correctamente esto deberia mostrar 5: %d \n", logCasero(33));
-    printf("\n logcasero no es el problema, por lo tanto el problema esta en el incremento de \n la cantidad de elementos cuando se realiza la insercion.\n \n estos 0..1 que siguen corresponden a la consulta de logCasero cada vez que se quiere realizar la insercion.\n por lo tanto no se esta aumentando la cantidad de elementos de la cola \n");
+
+    printf("si logaritmo() anda correctamente esto deberia mostrar 2: %d \n", logaritmo(4));
+    printf("si logaritmo() anda correctamente esto deberia mostrar 2: %d \n", logaritmo(6));
+    printf("si logaritmo() anda correctamente esto deberia mostrar 3: %d \n", logaritmo(9));
+    printf("si logaritmo() anda correctamente esto deberia mostrar 4: %d \n", logaritmo(17));
+    printf("si logaritmo() anda correctamente esto deberia mostrar 5: %d \n", logaritmo(33));
+    printf("\n logcasero no es el problema, por lo tanto el problema esta en el incremento de \n la cantidad de elementos cuando se realiza la insercion.\n \n estos 0..1 que siguen corresponden a la consulta de logaritmo cada vez que se quiere realizar la insercion.\n por lo tanto no se esta aumentando la cantidad de elementos de la cola \n");
     printf("\n inserta solo 2 nodos, el primero y el segundo(casos base), luego no entra al algoritmo buscar correctamente \n y deja de insertar\n");
 
     TColaCP cola = crearCola(f);
