@@ -10,7 +10,6 @@
 
 typedef void * TClave;
 typedef void * TValor;
-
 typedef struct entrada {
     TClave clave;
     TValor valor;
@@ -60,7 +59,7 @@ int f(TEntrada a, TEntrada b){
 
    int logaritmo(int numero){
       int ret = log(numero)/log(2);
-      printf("%d \n", ret);
+//      printf("%d \n", ret);
       return ret;
    }
 
@@ -103,32 +102,29 @@ int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
         return 1;
 }
 
-    int buscar(int contador, TEntrada aInsertar, TNodo nodo , TColaCP cola){
+    int buscar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
         printf("estoy dentro de buscar y la cantidad de elementos actuales de la cola es: %d \n", cola->cantidad_elementos);
-        int cont = contador; // empieza en 1, la vuelta del derecho entra con cont = 2
+        int nivel_actual = nivel; // empieza en 1, la vuelta del derecho entra con nivel_actual = 2
         int retorno = 0;
         if (nivel_actual < logaritmo(cola->cantidad_elementos)){
             nivel_actual++;
             retorno = buscar(nivel_actual, aInsertar, nodo->hijo_izquierdo, cola);
             if (!retorno)
-                buscar(cont,aInsertar, nodo->hijo_derecho, cola);
+                retorno = buscar(nivel_actual, aInsertar, nodo->hijo_derecho, cola);
         }
-        else
-            if (nodo->hijo_izquierdo == NULL){
-                TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
-                nuevo->entrada = aInsertar;
+        else {
+            if (nodo->hijo_izquierdo == NULL) {
+                TNodo nuevo = crear_nodo(aInsertar, nodo);
+                cola->cantidad_elementos++;
                 nodo->hijo_izquierdo = nuevo;
+                retorno = 1;
+            } else if (nodo->hijo_derecho == NULL) {
+                TNodo nuevo = crear_nodo(aInsertar, nodo);
+                nodo->hijo_derecho = nuevo;
                 cola->cantidad_elementos++;
                 retorno = 1;
             }
-            else
-                if (nodo->hijo_derecho == NULL){
-                    TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
-                    nuevo->entrada = aInsertar;
-                    nodo->hijo_derecho = nuevo;
-                    cola->cantidad_elementos++;
-                    retorno = 1;
-                }
+        }
     return retorno;
 }
 
@@ -169,8 +165,19 @@ int printearPreorden(TColaCP cola, TNodo raiz){
             printearPreorden(cola, raiz->hijo_derecho);
     return 1;
     }
+int nada(TEntrada e1, TEntrada e2){
+    return 0;
+}
 
+void miniTester(){
+        TColaCP  cola = crearCola(nada);
+        for(int i = 0; i < 10; i++){
+            TEntrada ent = (TEntrada)malloc(sizeof(struct entrada));
+            insertar(cola, ent);
+            asm("NOP");
+        }
 
+    }
 
 int main()
 {
