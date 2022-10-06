@@ -127,8 +127,8 @@ int f(TEntrada a, TEntrada b){
 TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
     TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
     nuevo->entrada = aInsertar;
-    nuevo->hijo_derecho = NULL;
-    nuevo->hijo_izquierdo = NULL;
+    nuevo->hijo_derecho = POS_NULA;
+    nuevo->hijo_izquierdo = POS_NULA;
 }
 
 int insertar(TColaCP cola, TEntrada aInsertar){
@@ -137,11 +137,11 @@ int insertar(TColaCP cola, TEntrada aInsertar){
         TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
         nuevo->entrada = aInsertar;
         cola ->raiz = nuevo;
-        cola->raiz->padre = NULL;
+        cola->raiz->padre = POS_NULA;
         cola ->cantidad_elementos++;
         aRetornar = 1;
-        nuevo->hijo_derecho = NULL;
-        nuevo->hijo_izquierdo = NULL;
+        nuevo->hijo_derecho = POS_NULA;
+        nuevo->hijo_izquierdo = POS_NULA;
     }
     else
         if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
