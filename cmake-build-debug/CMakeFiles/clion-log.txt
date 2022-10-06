@@ -1,8 +1,1 @@
-"C:\Program Files\JetBrains\CLion 2022.2.1\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2022.2.1/bin/ninja/win/ninja.exe" -G Ninja -S E:\Documents\ORGA\proyecto-orga -B E:\Documents\ORGA\proyecto-orga\cmake-build-debug
-CMake Error at CMakeLists.txt:10 (target_link_libraries):
-  Cannot specify link libraries for target "proyecto_odc" which is not built
-  by this project.
-
-
--- Configuring incomplete, errors occurred!
-See also "E:/Documents/ORGA/proyecto-orga/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+CMakeLists.txt not found in E:\Documents\ORGA\proyecto-orga Select CMakeLists.txt

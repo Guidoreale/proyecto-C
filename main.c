@@ -75,14 +75,14 @@ int f(TEntrada a, TEntrada b){
             cola->raiz = POS_NULA;
         }
         else if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
-            reacomodar(cola->raiz->hijo_izquierdo, cola);
+            reacomodarPerfecto(cola->raiz->hijo_izquierdo, cola);
             }
 
 
         return entrada;
    }
 
-void reacomodar(TNodo nodo , TColaCP pPrioridad) {
+void reacomodarPerfecto(TNodo nodo , TColaCP pPrioridad) {
 
 }
 
