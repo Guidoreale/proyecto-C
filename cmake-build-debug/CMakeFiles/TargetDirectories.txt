@@ -1,3 +1,0 @@
-E:/Documents/ORGA/proyecto-orga/cmake-build-debug/CMakeFiles/proyecto_orga.dir
-E:/Documents/ORGA/proyecto-orga/cmake-build-debug/CMakeFiles/edit_cache.dir
-E:/Documents/ORGA/proyecto-orga/cmake-build-debug/CMakeFiles/rebuild_cache.dir
