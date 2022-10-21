@@ -42,14 +42,12 @@ TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
 
 
 int f(TEntrada a, TEntrada b){
-    int valor = 0;
-    if(a->clave > b->clave)
-       valor = -1;
-    else if (b->clave > a->clave)
-       valor = 1;
-    else
-        valor = 0;
-    return valor;
+    if (a->valor < b->valor)
+        return -1;
+    else if(a->valor > b->valor)
+        return 1;
+        else
+            return 0;
     }
 
     int cp_cantidad(TColaCP cola){
@@ -73,7 +71,27 @@ int f(TEntrada a, TEntrada b){
         return aRetornar;
     }
     void reacomodar(TNodo nodo, TColaCP cola){
-
+        TEntrada temp = NULL;
+        if (nodo->hijo_izquierdo != NULL)
+            if (nodo->hijo_derecho == NULL){
+                temp = nodo->hijo_izquierdo->entrada;
+                nodo->hijo_izquierdo->entrada = nodo->entrada;
+                nodo->entrada = temp;
+                reacomodar(nodo->hijo_izquierdo,cola);
+            }
+            else if(cola->comparador(nodo->hijo_izquierdo->entrada,nodo->hijo_derecho->entrada) == 0 || cola->comparador(nodo->hijo_izquierdo->entrada,nodo->hijo_derecho->entrada) == -1){
+                temp = nodo->hijo_izquierdo->entrada;
+                nodo->hijo_izquierdo->entrada = nodo->entrada;
+                nodo->entrada = temp;
+                reacomodar(nodo->hijo_izquierdo,cola);
+            }
+            else{
+                temp = nodo->hijo_derecho->entrada;
+                nodo->hijo_derecho->entrada = nodo->entrada;
+                nodo->entrada = temp;
+                reacomodar(nodo->hijo_derecho,cola);
+            }
+    
     }
 
     TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo){
@@ -97,6 +115,7 @@ int f(TEntrada a, TEntrada b){
             else
                 aEliminar = buscarEliminable(cola->raiz, 0,(logaritmo(cola->cantidad_elementos)));
             
+            reacomodar(cola->raiz, cola);
             return aRetornar;
     }
 
@@ -114,6 +133,8 @@ int f(TEntrada a, TEntrada b){
     void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
         if (cola == NULL)
             exit(CCP_NO_INI);
+        else
+            destruirRecursivo(cola->raiz);
     }
 
     void fEliminar(TEntrada entrada){
