@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define FALSE 0;
-#define TRUE 1;
-#define CCP_NO_INI 2;
-#define POS_NULA NULL;
-#define ELE_NULO NULL;
+#define FALSE 0
+#define TRUE 1
+#define CCP_NO_INI 2
+#define POS_NULA NULL
+#define ELE_NULO NULL
 
 typedef void * TClave;
 typedef void * TValor;
@@ -58,27 +58,47 @@ int f(TEntrada a, TEntrada b){
 
    int logaritmo(int numero){
       int ret = log(numero)/log(2);
-//      printf("%d \n", ret);
+   //      printf("%d \n", ret);
       return ret;
    }
 
-    void reacomodar(TNodo nodo, TColaCP cola, TEntrada entrada,int contador){
+    TEntrada eliminarPerfecto(TColaCP cola){
+        TEntrada aRetornar = NULL;
+        TNodo iterador = cola->raiz;
+        while (iterador->hijo_derecho != NULL)
+            iterador = iterador->hijo_derecho;
+        aRetornar = iterador->entrada;
+        free(iterador);
+        iterador = NULL;
+        return aRetornar;
+    }
+    void reacomodar(TNodo nodo, TColaCP cola){
 
     }
 
-   TEntrada cp_eliminar(TColaCP cola){
-        TEntrada aRetornar;
-        if (cola == NULL){
-           // exit(CCP_NO_INI);
-        }
-        else{
-            aRetornar = cola->raiz->entrada;
-            int contador
-            reacomodar(cola->raiz,);
-        }
-
+    TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo){
+        TNodo aRetornar = NULL;
+        if (nivel == nivelMaximo)
+            aRetornar = nodo;
+        if (nodo->hijo_izquierdo != NULL)
+            aRetornar = buscarEliminable(nodo->hijo_izquierdo,nivel + 1, nivelMaximo);
+        if (nodo->hijo_derecho != NULL)
+            aRetornar = buscarEliminable(nodo->hijo_derecho, nivel + 1, nivelMaximo);
         return aRetornar;
-   }
+    }
+    TEntrada cp_eliminar(TColaCP cola){
+            TEntrada aRetornar;
+            TNodo aEliminar = NULL;
+            if (cola == NULL){
+                exit(CCP_NO_INI);
+            }
+            else if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1)
+                aRetornar = eliminarPerfecto(cola);
+            else
+                aEliminar = buscarEliminable(cola->raiz, 0,(logaritmo(cola->cantidad_elementos)));
+            
+            return aRetornar;
+    }
 
 
     void destruirRecursivo(TNodo nodo){
@@ -92,9 +112,9 @@ int f(TEntrada a, TEntrada b){
     }
 
     void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
-        destruirRecursivo(cola->raiz);
+        if (cola == NULL)
+            exit(CCP_NO_INI);
     }
-
 
     void fEliminar(TEntrada entrada){
         free(entrada);
