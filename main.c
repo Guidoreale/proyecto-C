@@ -31,7 +31,6 @@ typedef struct cola_con_prioridad {
 
 TNodo crear_nodo(TEntrada aInsertar, TNodo padre);
 
-void reacomodar(struct nodo *pNodo, TColaCP pPrioridad);
 
 TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
     TColaCP nuevaCola = (TColaCP) malloc(sizeof(struct cola_con_prioridad));
@@ -63,30 +62,47 @@ int f(TEntrada a, TEntrada b){
       return ret;
    }
 
+    void reacomodar(TNodo nodo, TColaCP cola, TEntrada entrada,int contador){
+
+    }
 
    TEntrada cp_eliminar(TColaCP cola){
-        TEntrada entrada;
+        TEntrada aRetornar;
         if (cola == NULL){
-            entrada = ELE_NULO;
+           // exit(CCP_NO_INI);
         }
-        else if (cola->cantidad_elementos==1) {
-            entrada = cola->raiz->entrada;
-            cola->raiz->entrada = ELE_NULO;
-            cola->raiz = POS_NULA;
+        else{
+            aRetornar = cola->raiz->entrada;
+            int contador
+            reacomodar(cola->raiz,);
         }
-        else if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
-            reacomodarPerfecto(cola->raiz->hijo_izquierdo, cola);
-            }
 
-
-        return entrada;
+        return aRetornar;
    }
 
-void reacomodarPerfecto(TNodo nodo , TColaCP pPrioridad) {
 
-}
+    void destruirRecursivo(TNodo nodo){
+        if(nodo->hijo_izquierdo!=NULL)
+            destruirRecursivo(nodo->hijo_izquierdo);
 
-int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
+        free(nodo);
+
+        if(nodo->hijo_derecho!=NULL)
+            destruirRecursivo(nodo->hijo_derecho);
+    }
+
+    void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
+        destruirRecursivo(cola->raiz);
+    }
+
+
+    void fEliminar(TEntrada entrada){
+        free(entrada);
+    }
+
+
+
+    int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
         TNodo temp; //TNodo ya es un puntero, por lo tento no deberiamos usar *temp sino temp.
         temp = cola->raiz;
         while(temp->hijo_izquierdo != NULL){
@@ -100,13 +116,12 @@ int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
         nuevo->hijo_derecho = NULL;
         nuevo->hijo_izquierdo = NULL;
         return 1;
-}
+    }
 
     int buscar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
-        printf("estoy dentro de buscar y la cantidad de elementos actuales de la cola es: %d \n", cola->cantidad_elementos);
         int nivel_actual = nivel; // empieza en 1, la vuelta del derecho entra con nivel_actual = 2
         int retorno = 0;
-        if (nivel_actual < logaritmo(cola->cantidad_elementos)){
+        if (nivel_actual < logaritmo(cola->cantidad_elementos)){ //logaritmo en base 2 de los elementos
             nivel_actual++;
             retorno = buscar(nivel_actual, aInsertar, nodo->hijo_izquierdo, cola);
             if (!retorno)
