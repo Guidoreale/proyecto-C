@@ -53,22 +53,20 @@ int f(TEntrada a, TEntrada b){
     int cp_cantidad(TColaCP cola){
         return cola->cantidad_elementos;
     }
-
+void fEliminar(TEntrada entrada){
+    free(entrada);
+}
    int logaritmo(int numero){
       int ret = log(numero)/log(2);
    //      printf("%d \n", ret);
       return ret;
    }
 
-    TEntrada eliminarPerfecto(TColaCP cola){
-        TEntrada aRetornar = NULL;
-        TNodo iterador = cola->raiz;
+    TNodo eliminarPerfecto(TColaCP cola){
+    TNodo iterador = cola->raiz;
         while (iterador->hijo_derecho != NULL)
             iterador = iterador->hijo_derecho;
-        aRetornar = iterador->entrada;
-        free(iterador);
-        iterador = NULL;
-        return aRetornar;
+        return iterador;
     }
     void reacomodar(TNodo nodo, TColaCP cola){
         TEntrada temp = NULL;
@@ -94,14 +92,14 @@ int f(TEntrada a, TEntrada b){
     
     }
 
-    TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo){
-        TNodo aRetornar = NULL;
+    TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo,TNodo actual){
+        TNodo aRetornar = actual;
         if (nivel == nivelMaximo)
             aRetornar = nodo;
         if (nodo->hijo_izquierdo != NULL)
-            aRetornar = buscarEliminable(nodo->hijo_izquierdo,nivel + 1, nivelMaximo);
+            aRetornar = buscarEliminable(nodo->hijo_izquierdo,nivel + 1, nivelMaximo,aRetornar);
         if (nodo->hijo_derecho != NULL)
-            aRetornar = buscarEliminable(nodo->hijo_derecho, nivel + 1, nivelMaximo);
+            aRetornar = buscarEliminable(nodo->hijo_derecho, nivel + 1, nivelMaximo,aRetornar);
         return aRetornar;
     }
     TEntrada cp_eliminar(TColaCP cola){
@@ -110,12 +108,36 @@ int f(TEntrada a, TEntrada b){
             if (cola == NULL){
                 exit(CCP_NO_INI);
             }
-            else if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1)
-                aRetornar = eliminarPerfecto(cola);
-            else
-                aEliminar = buscarEliminable(cola->raiz, 0,(logaritmo(cola->cantidad_elementos)));
-            
+            else{
+                if(cola->cantidad_elementos==0){
+                    return ELE_NULO;
+                }
+
+                aRetornar = cola->raiz->entrada;
+
+                if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
+                    aEliminar= eliminarPerfecto(cola);
+
+                    cola->raiz->entrada = aEliminar->entrada;
+
+                    aEliminar = NULL;
+
+
+
+                }
+                else{
+                    aEliminar=buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)),cola->raiz);
+
+                    cola->raiz->entrada = aEliminar->entrada;
+
+                    free(aEliminar);
+
+
+                }
+            }
+
             reacomodar(cola->raiz, cola);
+
             return aRetornar;
     }
 
@@ -137,9 +159,7 @@ int f(TEntrada a, TEntrada b){
             destruirRecursivo(cola->raiz);
     }
 
-    void fEliminar(TEntrada entrada){
-        free(entrada);
-    }
+
 
 
 
@@ -214,7 +234,7 @@ int insertar(TColaCP cola, TEntrada aInsertar){
 }
 
 int printearPreorden(TColaCP cola, TNodo raiz){
-        printf("valor = %d \n", (raiz->entrada)->valor);
+        printf("clave = %d \n", (raiz->entrada)->clave);
         if (raiz->hijo_izquierdo != NULL)
             printearPreorden(cola, raiz->hijo_izquierdo);
         if (raiz->hijo_derecho != NULL)
@@ -240,16 +260,10 @@ int main()
     miniTester();
 
 
-    printf("si logaritmo() anda correctamente esto deberia mostrar 2: %d \n", logaritmo(4));
-    printf("si logaritmo() anda correctamente esto deberia mostrar 2: %d \n", logaritmo(6));
-    printf("si logaritmo() anda correctamente esto deberia mostrar 3: %d \n", logaritmo(9));
-    printf("si logaritmo() anda correctamente esto deberia mostrar 4: %d \n", logaritmo(17));
-    printf("si logaritmo() anda correctamente esto deberia mostrar 5: %d \n", logaritmo(33));
-    printf("\n logcasero no es el problema, por lo tanto el problema esta en el incremento de \n la cantidad de elementos cuando se realiza la insercion.\n \n estos 0..1 que siguen corresponden a la consulta de logaritmo cada vez que se quiere realizar la insercion.\n por lo tanto no se esta aumentando la cantidad de elementos de la cola \n");
-    printf("\n inserta solo 2 nodos, el primero y el segundo(casos base), luego no entra al algoritmo buscar correctamente \n y deja de insertar\n");
 
     TColaCP cola = crearCola(f);
-    TEntrada arreglo[8];
+    TEntrada arreglo[3];
+
     TEntrada entr1 = (TEntrada) malloc(sizeof(struct entrada));
     TClave c1 = (TClave) 1;
     TValor v1 = (TValor) 2;
@@ -270,7 +284,7 @@ int main()
     entr3->clave = c3;
     entr3->valor = v3;
     arreglo[2] = entr3;
-
+/*
     TEntrada entr4 = (TEntrada) malloc(sizeof(struct entrada));
     TClave c4 = (TClave) 7;
     TValor v4 = (TValor) 8;
@@ -306,9 +320,17 @@ int main()
     entr8->valor = v8;
     arreglo[7] = entr8;
 
-    for(int i = 0; i < 8; i++){
+    TEntrada entr9 = (TEntrada) malloc(sizeof(struct entrada));
+    TClave c9 = (TClave) 53;
+    TValor v9 = (TValor) 24;
+    entr9->clave = c9;
+    entr9->valor = v9;
+    arreglo[8] = entr9;
+*/
+    for(int i = 0; i <3; i++){
         insertar(cola, arreglo[i]);
     }
+   cp_eliminar(cola);
    printearPreorden(cola, cola->raiz);
     return 0;
 }
