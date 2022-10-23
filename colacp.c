@@ -29,9 +29,14 @@ typedef struct cola_con_prioridad {
 } * TColaCP;
 
 
-TNodo crear_nodo(TEntrada aInsertar, TNodo padre);
-
-
+TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
+    TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
+    nuevo->entrada = aInsertar;
+    nuevo->hijo_derecho = POS_NULA;
+    nuevo->hijo_izquierdo = POS_NULA;
+    nuevo->padre = padre;
+    return nuevo;
+}
 
 TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
     TColaCP nuevaCola = (TColaCP) malloc(sizeof(struct cola_con_prioridad));
@@ -85,7 +90,7 @@ TNodo eliminarPerfecto(TColaCP cola){
 void reacomodar(TNodo nodo, TColaCP cola){
     TEntrada temp = NULL;
     if (cola->cantidad_elementos == 0){
-        exit(POS_NULA);
+        exit(CCP_NO_INI);
     }
     if (nodo->hijo_izquierdo != NULL) {
         if (nodo->hijo_derecho == NULL || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == 0 || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == -1) {
@@ -169,13 +174,13 @@ void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
         destruirRecursivo(cola->raiz,fEliminar);
 }
 
-void reacomodarInsercion(TNodo nodo) {
+void reacomodarInsercion(TNodo nodo,TColaCP cola) {
     TEntrada aux;
-    if ((nodo->padre!=NULL) && (f(nodo->padre->entrada,nodo->entrada)==1)) {
+    if ((nodo->padre!=NULL) && (cola->comparador(nodo->padre->entrada,nodo->entrada)==1)) {
         aux = nodo->entrada;
         nodo->entrada = nodo->padre->entrada;
         nodo->padre->entrada = aux;
-        reacomodarInsercion(nodo);
+        reacomodarInsercion(nodo, cola);
     }
 }
 
@@ -192,7 +197,7 @@ int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
     cola->cantidad_elementos++;
     nuevo->hijo_derecho = NULL;
     nuevo->hijo_izquierdo = NULL;
-    reacomodarInsercion(nuevo);
+    reacomodarInsercion(nuevo, cola);
     return TRUE;
 }
 
@@ -208,12 +213,14 @@ int buscar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
     else {
         if (nodo->hijo_izquierdo == NULL) {
             TNodo nuevo = crear_nodo(aInsertar, nodo);
+            reacomodarInsercion(nuevo, cola);
             cola->cantidad_elementos++;
             nodo->hijo_izquierdo = nuevo;
             retorno = TRUE;
         } 
         else if (nodo->hijo_derecho == NULL) {
             TNodo nuevo = crear_nodo(aInsertar, nodo);
+            reacomodarInsercion(nuevo, cola);
             nodo->hijo_derecho = nuevo;
             cola->cantidad_elementos++;
             retorno = TRUE;
@@ -222,15 +229,7 @@ int buscar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
     return retorno;
 }
 
-TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
-    TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
-    nuevo->entrada = aInsertar;
-    nuevo->hijo_derecho = POS_NULA;
-    nuevo->hijo_izquierdo = POS_NULA;
-    nuevo->padre = padre;
-    reacomodarInsercion(nuevo);
-    return nuevo;
-}
+
 
 int cp_insertar(TColaCP cola, TEntrada aInsertar){
     int aRetornar = FALSE;
@@ -381,8 +380,9 @@ int main()
         cp_insertar(cola, arreglo[i]);
     }
 
+    mostrarCola(cola);
     //cp_eliminar(cola);
-     //cp_destruir(cola,fEliminar);
+    //cp_destruir(cola,fEliminar);
     printearPreorden(cola, cola->raiz);
     return 0;
 }
