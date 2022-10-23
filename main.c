@@ -54,11 +54,12 @@ int f(TEntrada a, TEntrada b){
         return cola->cantidad_elementos;
     }
 void fEliminar(TEntrada entrada){
+    free(entrada->clave);
+    free(entrada->valor);
     free(entrada);
 }
    int logaritmo(int numero){
       int ret = log(numero)/log(2);
-   //      printf("%d \n", ret);
       return ret;
    }
 
@@ -70,26 +71,20 @@ void fEliminar(TEntrada entrada){
     }
     void reacomodar(TNodo nodo, TColaCP cola){
         TEntrada temp = NULL;
-        if (nodo->hijo_izquierdo != NULL)
-            if (nodo->hijo_derecho == NULL){
+        if (nodo->hijo_izquierdo != NULL) {
+            if (nodo->hijo_derecho == NULL || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == 0 || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == -1) {
                 temp = nodo->hijo_izquierdo->entrada;
                 nodo->hijo_izquierdo->entrada = nodo->entrada;
                 nodo->entrada = temp;
-                reacomodar(nodo->hijo_izquierdo,cola);
+                reacomodar(nodo->hijo_izquierdo, cola);
             }
-            else if(cola->comparador(nodo->hijo_izquierdo->entrada,nodo->hijo_derecho->entrada) == 0 || cola->comparador(nodo->hijo_izquierdo->entrada,nodo->hijo_derecho->entrada) == -1){
-                temp = nodo->hijo_izquierdo->entrada;
-                nodo->hijo_izquierdo->entrada = nodo->entrada;
-                nodo->entrada = temp;
-                reacomodar(nodo->hijo_izquierdo,cola);
-            }
-            else{
+            else {
                 temp = nodo->hijo_derecho->entrada;
                 nodo->hijo_derecho->entrada = nodo->entrada;
                 nodo->entrada = temp;
-                reacomodar(nodo->hijo_derecho,cola);
+                reacomodar(nodo->hijo_derecho, cola);
             }
-    
+        }
     }
 
     TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo,TNodo actual){
@@ -103,7 +98,7 @@ void fEliminar(TEntrada entrada){
         return aRetornar;
     }
     TEntrada cp_eliminar(TColaCP cola){
-            TEntrada aRetornar;
+            TEntrada aRetornar  = cola->raiz->entrada;
             TNodo aEliminar = NULL;
             if (cola == NULL){
                 exit(CCP_NO_INI);
@@ -112,27 +107,24 @@ void fEliminar(TEntrada entrada){
                 if(cola->cantidad_elementos==0){
                     return ELE_NULO;
                 }
-
-                aRetornar = cola->raiz->entrada;
-
-                if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
-                    aEliminar= eliminarPerfecto(cola);
-
-                    cola->raiz->entrada = aEliminar->entrada;
-
-                    aEliminar = NULL;
-
-
-
+                else if(cola->cantidad_elementos==1){
+                    aEliminar = cola->raiz;
+                    cola->raiz = NULL;
                 }
-                else{
-                    aEliminar=buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)),cola->raiz);
-
+                else {
+                    if (cola->cantidad_elementos == pow(2, (logaritmo(cola->cantidad_elementos) + 1)) - 1) {
+                        aEliminar = eliminarPerfecto(cola);
+                        aEliminar->padre->hijo_derecho = NULL;
+                    }
+                    else {
+                        aEliminar = buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)), cola->raiz);
+                        if (aEliminar->padre->hijo_izquierdo == aEliminar){
+                            aEliminar->padre->hijo_izquierdo = NULL;
+                        } else{
+                            aEliminar->padre->hijo_derecho = NULL;
+                        }
+                    }
                     cola->raiz->entrada = aEliminar->entrada;
-
-                    free(aEliminar);
-
-
                 }
             }
 
@@ -142,26 +134,22 @@ void fEliminar(TEntrada entrada){
     }
 
 
-    void destruirRecursivo(TNodo nodo){
+    void destruirRecursivo(TNodo nodo, void (*fEliminar)(TEntrada)){
         if(nodo->hijo_izquierdo!=NULL)
-            destruirRecursivo(nodo->hijo_izquierdo);
-
-        free(nodo);
+            destruirRecursivo(nodo->hijo_izquierdo,fEliminar);
 
         if(nodo->hijo_derecho!=NULL)
-            destruirRecursivo(nodo->hijo_derecho);
+            destruirRecursivo(nodo->hijo_derecho,fEliminar);
+        fEliminar(nodo->entrada);
+        free(nodo);
     }
 
     void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
         if (cola == NULL)
             exit(CCP_NO_INI);
         else
-            destruirRecursivo(cola->raiz);
+            destruirRecursivo(cola->raiz,fEliminar);
     }
-
-
-
-
 
     int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
         TNodo temp; //TNodo ya es un puntero, por lo tento no deberiamos usar *temp sino temp.
@@ -193,12 +181,12 @@ void fEliminar(TEntrada entrada){
                 TNodo nuevo = crear_nodo(aInsertar, nodo);
                 cola->cantidad_elementos++;
                 nodo->hijo_izquierdo = nuevo;
-                retorno = 1;
+                retorno = TRUE;
             } else if (nodo->hijo_derecho == NULL) {
                 TNodo nuevo = crear_nodo(aInsertar, nodo);
                 nodo->hijo_derecho = nuevo;
                 cola->cantidad_elementos++;
-                retorno = 1;
+                retorno = TRUE;
             }
         }
     return retorno;
@@ -219,7 +207,7 @@ int insertar(TColaCP cola, TEntrada aInsertar){
         cola ->raiz = nuevo;
         cola->raiz->padre = POS_NULA;
         cola ->cantidad_elementos++;
-        aRetornar = 1;
+        aRetornar = TRUE;
         nuevo->hijo_derecho = POS_NULA;
         nuevo->hijo_izquierdo = POS_NULA;
     }
@@ -230,107 +218,36 @@ int insertar(TColaCP cola, TEntrada aInsertar){
             else
                 aRetornar = buscar(1,aInsertar, cola->raiz,cola);
 
+    //reacomodarInsercion();
     return aRetornar;
 }
 
 int printearPreorden(TColaCP cola, TNodo raiz){
-        printf("clave = %d \n", (raiz->entrada)->clave);
+        printf("clave = %d \n", *((int*)raiz->entrada->clave));
         if (raiz->hijo_izquierdo != NULL)
             printearPreorden(cola, raiz->hijo_izquierdo);
         if (raiz->hijo_derecho != NULL)
             printearPreorden(cola, raiz->hijo_derecho);
-    return 1;
+    return TRUE;
     }
-int nada(TEntrada e1, TEntrada e2){
-    return 0;
-}
 
-void miniTester(){
-        TColaCP  cola = crearCola(nada);
-        for(int i = 0; i < 10; i++){
-            TEntrada ent = (TEntrada)malloc(sizeof(struct entrada));
-            insertar(cola, ent);
-            asm("NOP");
-        }
 
-    }
 
 int main()
 {
-    miniTester();
-
-
-
     TColaCP cola = crearCola(f);
-    TEntrada arreglo[3];
-
-    TEntrada entr1 = (TEntrada) malloc(sizeof(struct entrada));
-    TClave c1 = (TClave) 1;
-    TValor v1 = (TValor) 2;
-    entr1->clave = c1;
-    entr1->valor = v1;
-    arreglo[0] = entr1;
-
-    TEntrada entr2 = (TEntrada) malloc(sizeof(struct entrada));
-    TClave c2 = (TClave) 3;
-    TValor v2 = (TValor) 4;
-    entr2->clave = c2;
-    entr2->valor = v2;
-    arreglo[1] = entr2;
-
-    TEntrada entr3 = (TEntrada) malloc(sizeof(struct entrada));
-    TClave c3 = (TClave) 5;
-    TValor v3 = (TValor) 6;
-    entr3->clave = c3;
-    entr3->valor = v3;
-    arreglo[2] = entr3;
-/*
-    TEntrada entr4 = (TEntrada) malloc(sizeof(struct entrada));
-    TClave c4 = (TClave) 7;
-    TValor v4 = (TValor) 8;
-    entr4->clave = c4;
-    entr4->valor = v4;
-    arreglo[3] = entr4;
-
-    TEntrada entr5 = (TEntrada) malloc(sizeof(struct entrada));
-    TClave c5 = (TClave) 9;
-    TValor v5 = (TValor) 10;
-    entr5->clave = c5;
-    entr5->valor = v5;
-    arreglo[4] = entr5;
-
-    TEntrada entr6 = (TEntrada) malloc(sizeof(struct entrada));
-    TClave c6 = (TClave) 11;
-    TValor v6 = (TValor) 12;
-    entr6->clave = c6;
-    entr6->valor = v6;
-    arreglo[5] = entr6;
-
-    TEntrada entr7 = (TEntrada) malloc(sizeof(struct entrada));
-    TClave c7 = (TClave) 13;
-    TValor v7 = (TValor) 14;
-    entr7->clave = c7;
-    entr7->valor = v7;
-    arreglo[6] = entr7;
-
-    TEntrada entr8 = (TEntrada) malloc(sizeof(struct entrada));
-    TClave c8 = (TClave) 15;
-    TValor v8 = (TValor) 16;
-    entr8->clave = c8;
-    entr8->valor = v8;
-    arreglo[7] = entr8;
-
-    TEntrada entr9 = (TEntrada) malloc(sizeof(struct entrada));
-    TClave c9 = (TClave) 53;
-    TValor v9 = (TValor) 24;
-    entr9->clave = c9;
-    entr9->valor = v9;
-    arreglo[8] = entr9;
-*/
-    for(int i = 0; i <3; i++){
-        insertar(cola, arreglo[i]);
+    for(int i = 0; i <9; i++){
+        TEntrada entr = (TEntrada) malloc(sizeof(struct entrada));
+        int* c = (int*)malloc(sizeof (int));
+        int* v = (int*)malloc(sizeof (int));
+        *c = i;
+        *v = i+100;
+        entr->clave = c;
+        entr->valor = v;
+        cp_insertar(cola, entr);
     }
-   cp_eliminar(cola);
-   printearPreorden(cola, cola->raiz);
+    //cp_eliminar(cola);
+     cp_destruir(cola,fEliminar);
+    printearPreorden(cola, cola->raiz);
     return 0;
 }
