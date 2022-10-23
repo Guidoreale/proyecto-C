@@ -42,10 +42,19 @@ TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
 }
 
 
-int f(TEntrada a, TEntrada b){
-    if (*((int*)a->clave) < *((int*)b->clave))
+int ordenAscendente(TEntrada a, TEntrada b){
+    if (*((float*)a->clave) < *((float*)b->clave))
         return -1;
-    else if(*((int*)a->clave) > *((int*)b->clave))
+    else if(*((float*)a->clave) > *((float*)b->clave))
+        return 1;
+    else
+        return 0;
+    }
+
+int ordenDescendente(TEntrada a, TEntrada b){
+    if (*((float*)a->clave) > *((float*)b->clave))
+        return -1;
+    else if(*((float*)a->clave) < *((float*)b->clave))
         return 1;
     else
         return 0;
@@ -54,151 +63,162 @@ int f(TEntrada a, TEntrada b){
 int cp_cantidad(TColaCP cola){
     return cola->cantidad_elementos;
 }
+
 void fEliminar(TEntrada entrada){
     free(entrada->clave);
     free(entrada->valor);
     free(entrada);
 }
-   int logaritmo(int numero){
-      int ret = log(numero)/log(2);
-      return ret;
-   }
 
-    TNodo eliminarPerfecto(TColaCP cola){
+int logaritmo(int numero){
+    int ret = log(numero)/log(2);
+    return ret;
+}
+
+TNodo eliminarPerfecto(TColaCP cola){
     TNodo iterador = cola->raiz;
-        while (iterador->hijo_derecho != NULL)
-            iterador = iterador->hijo_derecho;
-        return iterador;
-    }
-    void reacomodar(TNodo nodo, TColaCP cola){
-        TEntrada temp = NULL;
-        if (nodo->hijo_izquierdo != NULL) {
-            if (nodo->hijo_derecho == NULL || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == 0 || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == -1) {
-                temp = nodo->hijo_izquierdo->entrada;
-                nodo->hijo_izquierdo->entrada = nodo->entrada;
-                nodo->entrada = temp;
-                reacomodar(nodo->hijo_izquierdo, cola);
-            }
-            else {
-                temp = nodo->hijo_derecho->entrada;
-                nodo->hijo_derecho->entrada = nodo->entrada;
-                nodo->entrada = temp;
-                reacomodar(nodo->hijo_derecho, cola);
-            }
-        }
-    }
+    while (iterador->hijo_derecho != NULL)
+        iterador = iterador->hijo_derecho;
+    return iterador;
+}
 
-    TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo,TNodo actual){
-        TNodo aRetornar = actual;
-        if (nivel == nivelMaximo)
-            aRetornar = nodo;
-        if (nodo->hijo_izquierdo != NULL)
-            aRetornar = buscarEliminable(nodo->hijo_izquierdo,nivel + 1, nivelMaximo,aRetornar);
-        if (nodo->hijo_derecho != NULL)
-            aRetornar = buscarEliminable(nodo->hijo_derecho, nivel + 1, nivelMaximo,aRetornar);
-        return aRetornar;
+void reacomodar(TNodo nodo, TColaCP cola){
+    TEntrada temp = NULL;
+    if (cola->cantidad_elementos == 0){
+        exit(POS_NULA);
     }
-    TEntrada cp_eliminar(TColaCP cola){
-            TEntrada aRetornar  = cola->raiz->entrada;
-            TNodo aEliminar = NULL;
-            if (cola == NULL){
-                exit(CCP_NO_INI);
-            }
-            else{
-                if(cola->cantidad_elementos==0){
-                    return ELE_NULO;
-                }
-                else if(cola->cantidad_elementos==1){
-                    aEliminar = cola->raiz;
-                    cola->raiz = NULL;
-                }
-                else {
-                    if (cola->cantidad_elementos == pow(2, (logaritmo(cola->cantidad_elementos) + 1)) - 1) {
-                        aEliminar = eliminarPerfecto(cola);
-                        aEliminar->padre->hijo_derecho = NULL;
-                    }
-                    else {
-                        aEliminar = buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)), cola->raiz);
-                        if (aEliminar->padre->hijo_izquierdo == aEliminar){
-                            aEliminar->padre->hijo_izquierdo = NULL;
-                        } else{
-                            aEliminar->padre->hijo_derecho = NULL;
-                        }
-                    }
-                    cola->raiz->entrada = aEliminar->entrada;
-                }
-            }
-            free(aEliminar);
-            reacomodar(cola->raiz, cola);
-            return aRetornar;
-    }
-
-
-    void destruirRecursivo(TNodo nodo, void (*fEliminar)(TEntrada)){
-        if(nodo->hijo_izquierdo!=NULL)
-            destruirRecursivo(nodo->hijo_izquierdo,fEliminar);
-
-        if(nodo->hijo_derecho!=NULL)
-            destruirRecursivo(nodo->hijo_derecho,fEliminar);
-        fEliminar(nodo->entrada);
-        free(nodo);
-    }
-
-    void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
-        if (cola == NULL)
-            exit(CCP_NO_INI);
-        else
-            destruirRecursivo(cola->raiz,fEliminar);
-    }
-    void reacomodarInsercion(TNodo nodo) {
-        TEntrada aux;
-        if ((nodo->padre!=NULL) && (f(nodo->padre->entrada,nodo->entrada)==1)) {
-            aux = nodo->entrada;
-            nodo->entrada = nodo->padre->entrada;
-            nodo->padre->entrada = aux;
-            reacomodarInsercion(nodo);
-        }
-    }
-    int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
-        TNodo temp; //TNodo ya es un puntero, por lo tento no deberiamos usar *temp sino temp.
-        temp = cola->raiz;
-        while(temp->hijo_izquierdo != NULL){
-            temp = temp->hijo_izquierdo;
-        }
-        TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
-        nuevo->entrada = aInsertar;
-        temp->hijo_izquierdo = nuevo;
-        nuevo->padre = temp;
-        cola->cantidad_elementos++;
-        nuevo->hijo_derecho = NULL;
-        nuevo->hijo_izquierdo = NULL;
-        reacomodarInsercion(nuevo);
-        return TRUE;
-    }
-
-    int buscar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
-        int nivel_actual = nivel; // empieza en 1, la vuelta del derecho entra con nivel_actual = 2
-        int retorno = FALSE;
-        if (nivel_actual < logaritmo(cola->cantidad_elementos)){ //logaritmo en base 2 de los elementos
-            nivel_actual++;
-            retorno = buscar(nivel_actual, aInsertar, nodo->hijo_izquierdo, cola);
-            if (!retorno)
-                retorno = buscar(nivel_actual, aInsertar, nodo->hijo_derecho, cola);
+    if (nodo->hijo_izquierdo != NULL) {
+        if (nodo->hijo_derecho == NULL || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == 0 || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == -1) {
+            temp = nodo->hijo_izquierdo->entrada;
+            nodo->hijo_izquierdo->entrada = nodo->entrada;
+            nodo->entrada = temp;
+            reacomodar(nodo->hijo_izquierdo, cola);
         }
         else {
-            if (nodo->hijo_izquierdo == NULL) {
-                TNodo nuevo = crear_nodo(aInsertar, nodo);
-                cola->cantidad_elementos++;
-                nodo->hijo_izquierdo = nuevo;
-                retorno = TRUE;
-
-            } else if (nodo->hijo_derecho == NULL) {
-                TNodo nuevo = crear_nodo(aInsertar, nodo);
-                nodo->hijo_derecho = nuevo;
-                cola->cantidad_elementos++;
-                retorno = TRUE;
-            }
+            temp = nodo->hijo_derecho->entrada;
+            nodo->hijo_derecho->entrada = nodo->entrada;
+            nodo->entrada = temp;
+            reacomodar(nodo->hijo_derecho, cola);
         }
+    }
+}
+
+TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo,TNodo actual){
+    TNodo aRetornar = actual;
+    if (nivel == nivelMaximo)
+        aRetornar = nodo;
+    if (nodo->hijo_izquierdo != NULL)
+         aRetornar = buscarEliminable(nodo->hijo_izquierdo,nivel + 1, nivelMaximo,aRetornar);
+    if (nodo->hijo_derecho != NULL)
+        aRetornar = buscarEliminable(nodo->hijo_derecho, nivel + 1, nivelMaximo,aRetornar);
+    return aRetornar;
+}
+
+TEntrada cp_eliminar(TColaCP cola){
+    TEntrada aRetornar  = cola->raiz->entrada;
+    TNodo aEliminar = NULL;
+    if (cola == NULL){
+        exit(CCP_NO_INI);
+    }
+    else{
+        if(cola->cantidad_elementos==0){
+            return ELE_NULO;
+        }
+        else if(cola->cantidad_elementos==1){
+            aEliminar = cola->raiz;
+            cola->raiz = NULL;
+        }
+            else {
+                if (cola->cantidad_elementos == pow(2, (logaritmo(cola->cantidad_elementos) + 1)) - 1) {
+                    aEliminar = eliminarPerfecto(cola);
+                    aEliminar->padre->hijo_derecho = NULL;
+            }
+            else {
+                aEliminar = buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)), cola->raiz);
+                if (aEliminar->padre->hijo_izquierdo == aEliminar){
+                    aEliminar->padre->hijo_izquierdo = NULL;
+                } 
+                else{
+                    aEliminar->padre->hijo_derecho = NULL;
+                }
+            }
+                cola->raiz->entrada = aEliminar->entrada;
+            }
+    }
+    free(aEliminar);
+    cola->cantidad_elementos--;
+    reacomodar(cola->raiz, cola);
+    return aRetornar;
+    }
+
+
+void destruirRecursivo(TNodo nodo, void (*fEliminar)(TEntrada)){
+    if(nodo->hijo_izquierdo!=NULL)
+        destruirRecursivo(nodo->hijo_izquierdo,fEliminar);
+
+    if(nodo->hijo_derecho!=NULL)
+        destruirRecursivo(nodo->hijo_derecho,fEliminar);
+    fEliminar(nodo->entrada);
+    free(nodo);
+}
+
+void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
+    if (cola == NULL)
+        exit(CCP_NO_INI);
+    else
+        destruirRecursivo(cola->raiz,fEliminar);
+}
+
+void reacomodarInsercion(TNodo nodo) {
+    TEntrada aux;
+    if ((nodo->padre!=NULL) && (f(nodo->padre->entrada,nodo->entrada)==1)) {
+        aux = nodo->entrada;
+        nodo->entrada = nodo->padre->entrada;
+        nodo->padre->entrada = aux;
+        reacomodarInsercion(nodo);
+    }
+}
+
+int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
+    TNodo temp; //TNodo ya es un puntero, por lo tento no deberiamos usar *temp sino temp.
+    temp = cola->raiz;
+    while(temp->hijo_izquierdo != NULL){
+        temp = temp->hijo_izquierdo;
+    }
+    TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
+    nuevo->entrada = aInsertar;
+    temp->hijo_izquierdo = nuevo;
+    nuevo->padre = temp;
+    cola->cantidad_elementos++;
+    nuevo->hijo_derecho = NULL;
+    nuevo->hijo_izquierdo = NULL;
+    reacomodarInsercion(nuevo);
+    return TRUE;
+}
+
+int buscar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
+    int nivel_actual = nivel; // empieza en 1, la vuelta del derecho entra con nivel_actual = 2
+    int retorno = FALSE;
+    if (nivel_actual < logaritmo(cola->cantidad_elementos)){ //logaritmo en base 2 de los elementos
+        nivel_actual++;
+        retorno = buscar(nivel_actual, aInsertar, nodo->hijo_izquierdo, cola);
+        if (!retorno)
+            retorno = buscar(nivel_actual, aInsertar, nodo->hijo_derecho, cola);
+    }
+    else {
+        if (nodo->hijo_izquierdo == NULL) {
+            TNodo nuevo = crear_nodo(aInsertar, nodo);
+            cola->cantidad_elementos++;
+            nodo->hijo_izquierdo = nuevo;
+            retorno = TRUE;
+        } 
+        else if (nodo->hijo_derecho == NULL) {
+            TNodo nuevo = crear_nodo(aInsertar, nodo);
+            nodo->hijo_derecho = nuevo;
+            cola->cantidad_elementos++;
+            retorno = TRUE;
+        }
+    }
     return retorno;
 }
 
@@ -226,7 +246,7 @@ int cp_insertar(TColaCP cola, TEntrada aInsertar){
     }
     else
         if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
-               aRetornar= insertarPerfecto(aInsertar,cola);
+            aRetornar= insertarPerfecto(aInsertar,cola);
         }
         else
             aRetornar = buscar(1,aInsertar, cola->raiz,cola);
@@ -244,14 +264,43 @@ int printearPreorden(TColaCP cola, TNodo raiz){
         if (raiz->hijo_derecho != NULL)
             printearPreorden(cola, raiz->hijo_derecho);
     return TRUE;
+}
+
+void mostrarColaDescendente(TColaCP cola){
+    if (cola == NULL){
+        exit(CCP_NO_INI);
     }
+    TColaCP nueva = crearCola(ordenDescendente);
+    while (cola->cantidad_elementos != 0){
+        cp_insertar(nueva, cola->raiz->entrada);
+        cp_eliminar(cola);
+    }
+    while (nueva->cantidad_elementos != 0){
+        printf("%s \n", nueva->raiz->entrada->valor);
+        cp_insertar(cola, cola->raiz->entrada);
+        cp_eliminar(nueva);
+    }
+    nueva = NULL;
+}
 
-
+void mostrarCola(TColaCP cola){
+    if (cola == NULL){
+        exit(CCP_NO_INI);
+    }
+    TColaCP nueva = crearCola(ordenAscendente);
+    while (cola->cantidad_elementos != 0){
+        printf("%s \n", cola->raiz->entrada->valor);
+        cp_insertar(nueva, cola->raiz->entrada);
+        cp_eliminar(cola);
+    }
+    cola = nueva;
+    nueva = NULL;
+}
 
 int main()
 {
 
-    TColaCP cola = crearCola(f);
+    TColaCP cola = crearCola(ordenAscendente);
 
     TEntrada arreglo[8];
 
