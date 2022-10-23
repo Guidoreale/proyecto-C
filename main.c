@@ -190,15 +190,12 @@ void fEliminar(TEntrada entrada){
                 TNodo nuevo = crear_nodo(aInsertar, nodo);
                 cola->cantidad_elementos++;
                 nodo->hijo_izquierdo = nuevo;
-                reacomodarInsercion(nuevo);
                 retorno = TRUE;
 
             } else if (nodo->hijo_derecho == NULL) {
                 TNodo nuevo = crear_nodo(aInsertar, nodo);
                 nodo->hijo_derecho = nuevo;
                 cola->cantidad_elementos++;
-                reacomodarInsercion(nuevo);
-
                 retorno = TRUE;
             }
         }
@@ -211,6 +208,7 @@ TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
     nuevo->hijo_derecho = POS_NULA;
     nuevo->hijo_izquierdo = POS_NULA;
     nuevo->padre = padre;
+    reacomodarInsercion(nuevo);
     return nuevo;
 }
 
@@ -222,9 +220,9 @@ int cp_insertar(TColaCP cola, TEntrada aInsertar){
         cola ->raiz = nuevo;
         cola->raiz->padre = POS_NULA;
         cola ->cantidad_elementos++;
-        aRetornar = TRUE;
         nuevo->hijo_derecho = POS_NULA;
         nuevo->hijo_izquierdo = POS_NULA;
+        aRetornar = TRUE;
     }
     else
         if (cola->cantidad_elementos == pow (2,(logaritmo(cola->cantidad_elementos) + 1)) - 1){
@@ -252,17 +250,88 @@ int printearPreorden(TColaCP cola, TNodo raiz){
 
 int main()
 {
+
     TColaCP cola = crearCola(f);
-    for(int i = 0; i <9; i++){
-        TEntrada entr = (TEntrada) malloc(sizeof(struct entrada));
-        int* c = (int*)malloc(sizeof (int));
-        int* v = (int*)malloc(sizeof (int));
-        *c = i;
-        *v = i+100;
-        entr->clave = c;
-        entr->valor = v;
-        cp_insertar(cola, entr);
+
+    TEntrada arreglo[8];
+
+    TEntrada entr1 = (TEntrada) malloc(sizeof(struct entrada));
+    int* c1 = (int*)malloc(sizeof (int));
+    int* v1 = (int*)malloc(sizeof (int));
+    *c1 = 7;
+    *v1 = 5;
+    entr1->clave = c1;
+    entr1->valor = v1;
+    arreglo[0] = entr1;
+
+    TEntrada entr2 = (TEntrada) malloc(sizeof(struct entrada));
+    int* c2 = (int*)malloc(sizeof (int));
+    int* v2 = (int*)malloc(sizeof (int));
+    *c2 = 1;
+    *v2 = 5;
+    entr2->clave = c2;
+    entr2->valor = v2;
+    arreglo[1] = entr2;
+
+    TEntrada entr3 = (TEntrada) malloc(sizeof(struct entrada));
+    int* c3 = (int*)malloc(sizeof (int));
+    int* v3 = (int*)malloc(sizeof (int));
+    *c3 = 9;
+    *v3 = 5;
+    entr3->clave = c3;
+    entr3->valor = v3;
+    arreglo[2] = entr3;
+
+    TEntrada entr4 = (TEntrada) malloc(sizeof(struct entrada));
+    int* c4 = (int*)malloc(sizeof (int));
+    int* v4 = (int*)malloc(sizeof (int));
+    *c4 = 6;
+    *v4 = 5;
+    entr4->clave = c4;
+    entr4->valor = v4;
+    arreglo[3] = entr4;
+
+
+    TEntrada entr5 = (TEntrada) malloc(sizeof(struct entrada));
+    int* c5 = (int*)malloc(sizeof (int));
+    int* v5 = (int*)malloc(sizeof (int));
+    *c5 = 3;
+    *v5 = 5;
+    entr5->clave = c5;
+    entr5->valor = v5;
+    arreglo[4] = entr5;
+
+    TEntrada entr6 = (TEntrada) malloc(sizeof(struct entrada));
+    int* c6 = (int*)malloc(sizeof (int));
+    int* v6 = (int*)malloc(sizeof (int));
+    *c6 = 2;
+    *v6 = 5;
+    entr6->clave = c6;
+    entr6->valor = v6;
+    arreglo[5] = entr6;
+
+    TEntrada entr7 = (TEntrada) malloc(sizeof(struct entrada));
+    int* c7 = (int*)malloc(sizeof (int));
+    int* v7 = (int*)malloc(sizeof (int));
+    *c7 = 8;
+    *v7 = 5;
+    entr7->clave = c7;
+    entr7->valor = v7;
+    arreglo[6] = entr7;
+
+    TEntrada entr8 = (TEntrada) malloc(sizeof(struct entrada));
+    int* c8 = (int*)malloc(sizeof (int));
+    int* v8 = (int*)malloc(sizeof (int));
+    *c8 = 5;
+    *v8 = 5;
+    entr8->clave = c8;
+    entr8->valor = v8;
+    arreglo[7] = entr8;
+
+    for(int i = 0; i < 8; i++){
+        cp_insertar(cola, arreglo[i]);
     }
+
     //cp_eliminar(cola);
      //cp_destruir(cola,fEliminar);
     printearPreorden(cola, cola->raiz);
