@@ -140,7 +140,7 @@ TEntrada cp_eliminar(TColaCP cola){
             }
             else {
                 aEliminar = buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)), cola->raiz);
-                if (aEliminar->padre->hijo_izquierdo == aEliminar){
+                if (aEliminar->padre->hijo_izquierdo == aEliminar){//linea que causa error.
                     aEliminar->padre->hijo_izquierdo = NULL;
                 } 
                 else{
@@ -172,6 +172,7 @@ void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
         exit(CCP_NO_INI);
     else
         destruirRecursivo(cola->raiz,fEliminar);
+        cola->cantidad_elementos = 0;
 }
 
 void reacomodarInsercion(TNodo nodo,TColaCP cola) {
@@ -257,6 +258,10 @@ int cp_insertar(TColaCP cola, TEntrada aInsertar){
 
 
 int printearPreorden(TColaCP cola, TNodo raiz){
+        if (cola->cantidad_elementos == 0){
+            printf("cola con 0 elementos");
+            return 0;
+        }
         printf("clave = %d \n", *((int*)raiz->entrada->clave));
         if (raiz->hijo_izquierdo != NULL)
             printearPreorden(cola, raiz->hijo_izquierdo);
@@ -296,7 +301,7 @@ void mostrarCola(TColaCP cola){
     nueva = NULL;
 }
 
-int main()
+/*int main()
 {
 
     TColaCP cola = crearCola(ordenAscendente);
@@ -380,9 +385,9 @@ int main()
         cp_insertar(cola, arreglo[i]);
     }
 
-    mostrarCola(cola);
+    //mostrarCola(cola);
     //cp_eliminar(cola);
     //cp_destruir(cola,fEliminar);
     printearPreorden(cola, cola->raiz);
     return 0;
-}
+}*/
