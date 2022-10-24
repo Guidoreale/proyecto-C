@@ -171,8 +171,10 @@ void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
     if (cola == NULL)
         exit(CCP_NO_INI);
     else
-        destruirRecursivo(cola->raiz,fEliminar);
-        cola->cantidad_elementos = 0;
+        destruirRecursivo(cola->raiz, fEliminar);
+
+    cola->cantidad_elementos = 0;
+
 }
 
 void reacomodarInsercion(TNodo nodo,TColaCP cola) {
@@ -280,7 +282,7 @@ void mostrarColaDescendente(TColaCP cola){
         cp_eliminar(cola);
     }
     while (nueva->cantidad_elementos != 0){
-        printf("%s \n", nueva->raiz->entrada->valor);
+        printf("%s \n", (char*)nueva->raiz->entrada->valor);
         cp_insertar(cola, cola->raiz->entrada);
         cp_eliminar(nueva);
     }
@@ -293,7 +295,7 @@ void mostrarCola(TColaCP cola){
     }
     TColaCP nueva = crearCola(ordenAscendente);
     while (cola->cantidad_elementos != 0){
-        printf("%s \n", cola->raiz->entrada->valor);
+        printf("%s \n", (char*)cola->raiz->entrada->valor);
         cp_insertar(nueva, cola->raiz->entrada);
         cp_eliminar(cola);
     }

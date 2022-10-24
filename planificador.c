@@ -26,14 +26,14 @@
 
 }*/
 typedef struct ciudad {
-char * nombre;
-float pos_x;
-float pos_y;
+    char * nombre;
+    float pos_x;
+    float pos_y;
 } * TCiudad;
 
 typedef struct usuario {
-float pos_x;
-float pos_y;
+    float pos_x;
+    float pos_y;
 } * TUsuario;
 
 void vaciar(char temp[]){
@@ -47,40 +47,42 @@ void cargarNombre(char temp[], int contador, TCiudad arreglo ){
     arreglo[contador].nombre = (char*) malloc (k * sizeof(char));
     strcpy(arreglo[contador].nombre, temp);
 }
-void cargarPosX(int temp, int contador, TCiudad arreglo){
+void cargarPosX(float temp, int contador, TCiudad arreglo){
     arreglo[contador].pos_x = temp;
 }
-void cargarPosY(int temp, int contador, TCiudad arreglo){
+void cargarPosY(float temp, int contador, TCiudad arreglo){
     arreglo[contador].pos_y = temp;
 }
 
-void cargarXUsuario(int temp, TUsuario usuario){
+void cargarXUsuario(float temp, TUsuario usuario){
     usuario->pos_x = temp;
 }
 
-void cargarYUsuario(int temp, TUsuario usuario){
+void cargarYUsuario(float temp, TUsuario usuario){
     usuario->pos_y = temp;
 }
 
-int main(int argc,char *args[]){
+int main(){
     /*if (argc != 2){
         printf("error en args");
         exit(1);
     }
-    FILE *archivo = fopen(args[1],"r");*/
+         FILE *archivo = fopen(argv[1],"r");
+
+*/
 
     TCiudad ciudades;
     TUsuario persona;
-    FILE *archivo = fopen("mapa.txt","r");
+    FILE* archivo = fopen("mapa.txt","r");
     if (archivo == NULL){
         printf("no se pudo abrir el archivo. \n");
         exit(1);
     }
 
     char temporal[100];
-    int cont = 0; 
+    int cont = 0;
     char aux = '0';
-    int auxInt = 0;
+    float auxFloat = 0;
 
     while(!feof(archivo)){
         fgets(temporal,50,archivo);
@@ -95,19 +97,19 @@ int main(int argc,char *args[]){
         printf("no pudimos reservar memoria.");
     }
 
-          
-    auxInt = fgetc(archivo);
-    cargarXUsuario(auxInt, persona);      
+
+    auxFloat = fgetc(archivo)-'0';
+    cargarXUsuario(auxFloat, persona);
     aux = fgetc(archivo);
     if (aux != ';'){
         printf("archivo con mal formato");
         exit(1);
     }
-    auxInt = fgetc(archivo);
-    cargarYUsuario(auxInt, persona);
+    auxFloat = fgetc(archivo)-'0';
+    cargarYUsuario(auxFloat, persona);
     fgetc(archivo);
-    
-    for (int i = 0; aux != EOF; i++){ // contador de numero de ciudad (para cada ciudad se ejecuta este codigo)
+
+    for (int i = 0; aux != '\n' || i<=3; i++){ // contador de numero de ciudad (para cada ciudad se ejecuta este codigo)
         vaciar(temporal);
         aux = '0';
         for(int j = 0; aux != ';'; j++){
@@ -117,22 +119,22 @@ int main(int argc,char *args[]){
             }
         }
         cargarNombre(temporal, i, ciudades);
-        
-        auxInt = fgetc(archivo);
-        cargarPosX(auxInt,i, ciudades);
+
+        auxFloat = fgetc(archivo) -'0';
+        cargarPosX(auxFloat, i, ciudades);
 
         aux = fgetc(archivo);
         if (aux != ';'){
             printf("archivo con mal formato.\n");
             exit(1);
         }
-        auxInt = fgetc(archivo);
-        cargarPosY(auxInt, i, ciudades);
+        auxFloat = fgetc(archivo)-'0';
+        cargarPosY(auxFloat, i, ciudades);
         aux = fgetc(archivo);
     }
     fclose(archivo);
     for (int iterador = 0; iterador <= 3; iterador++){
-        printf("ciudad 1: %s, posicion: %d %d \n", ciudades[iterador].nombre, ciudades[iterador].pos_x, ciudades[iterador].pos_y);
+        printf("ciudad %d: %s, posicion: %f %f \n",iterador, ciudades[iterador].nombre, ciudades[iterador].pos_x, ciudades[iterador].pos_y);
     }
     return 0;
 }
