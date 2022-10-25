@@ -1,32 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "colacp.h"
 
-#define FALSE 0
-#define TRUE 1
-#define CCP_NO_INI 2
-#define POS_NULA NULL
-#define ELE_NULO NULL
-
-typedef void * TClave;
-typedef void * TValor;
-typedef struct entrada {
-    TClave clave;
-    TValor valor;
-} * TEntrada;
-
-typedef struct nodo {
-    TEntrada entrada;
-    struct nodo * padre;
-    struct nodo * hijo_izquierdo;
-    struct nodo * hijo_derecho;
-} * TNodo;
-
-typedef struct cola_con_prioridad {
-    int cantidad_elementos;
-    TNodo raiz;
-    int (*comparador)(TEntrada, TEntrada);
-} * TColaCP;
 
 
 TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
@@ -142,7 +118,7 @@ TEntrada cp_eliminar(TColaCP cola){
                 aEliminar = buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)), cola->raiz);
                 if (aEliminar->padre->hijo_izquierdo == aEliminar){//linea que causa error.
                     aEliminar->padre->hijo_izquierdo = NULL;
-                } 
+                }
                 else{
                     aEliminar->padre->hijo_derecho = NULL;
                 }
@@ -220,7 +196,7 @@ int buscar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
             cola->cantidad_elementos++;
             nodo->hijo_izquierdo = nuevo;
             retorno = TRUE;
-        } 
+        }
         else if (nodo->hijo_derecho == NULL) {
             TNodo nuevo = crear_nodo(aInsertar, nodo);
             reacomodarInsercion(nuevo, cola);
@@ -303,7 +279,7 @@ void mostrarCola(TColaCP cola){
     nueva = NULL;
 }
 
-/*int main()
+int main()
 {
 
     TColaCP cola = crearCola(ordenAscendente);
@@ -387,9 +363,9 @@ void mostrarCola(TColaCP cola){
         cp_insertar(cola, arreglo[i]);
     }
 
-    //mostrarCola(cola);
-    //cp_eliminar(cola);
+    mostrarCola(cola);
+    cp_eliminar(cola);
     //cp_destruir(cola,fEliminar);
     printearPreorden(cola, cola->raiz);
     return 0;
-}*/
+}

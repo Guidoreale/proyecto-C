@@ -31,7 +31,11 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="main.c">
+		<Unit filename="colacp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="colacp.h" />
+		<Unit filename="planificador.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>

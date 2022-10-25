@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "colacp.h"
 
 #define SIZE 2000
 
@@ -61,15 +62,15 @@ void cargarXUsuario(float temp, TUsuario usuario){
 void cargarYUsuario(float temp, TUsuario usuario){
     usuario->pos_y = temp;
 }
-
+/*
 int main(){
-    /*if (argc != 2){
+    if (argc != 2){
         printf("error en args");
         exit(1);
     }
          FILE *archivo = fopen(argv[1],"r");
 
-*/
+
 
     TCiudad ciudades;
     TUsuario persona;
@@ -136,5 +137,34 @@ int main(){
     for (int iterador = 0; iterador <= 3; iterador++){
         printf("ciudad %d: %s, posicion: %f %f \n",iterador, ciudades[iterador].nombre, ciudades[iterador].pos_x, ciudades[iterador].pos_y);
     }
+
+
+
+
+    Tciudad *arr = (Tciudad*) malloc(sizeOf(cont * Tciudad));
+    for(int i = 0; i<cont;i++){
+        arr[i] = (Tciudad) malloc(sizeOf(struct ciudad));
+        fscanf(archivo,"%[^;];%f;%f\n",arr[i]->nombre, &arr[i]->x, &arr[i]->y);
+
+    }
+
+    ciudades = (TCiudad) malloc(sizeof(struct ciudad));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     return 0;
 }
+*/
