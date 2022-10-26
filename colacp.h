@@ -27,4 +27,11 @@ typedef struct cola_con_prioridad {
     int (*comparador)(TEntrada, TEntrada);
 } * TColaCP;
 
+TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada));
+int cp_insertar(TColaCP cola, TEntrada entr);
+int cp_cantidad(TColaCP cola);
+void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) );
+TEntrada cp_eliminar(TColaCP cola);
+
+
 #endif

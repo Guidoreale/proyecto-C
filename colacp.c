@@ -278,7 +278,7 @@ void mostrarCola(TColaCP cola){
     cola = nueva;
     nueva = NULL;
 }
-
+/*
 int main()
 {
 
@@ -369,3 +369,4 @@ int main()
     printearPreorden(cola, cola->raiz);
     return 0;
 }
+*/

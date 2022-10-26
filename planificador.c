@@ -2,30 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "colacp.h"
-
-#define SIZE 2000
-
-/*void f(char *file1){
-
-    char buffer[SIZE];
-    FILE *archivo1 = fopen(file1,"r");
-    int encontre = 0;
-    char ch;
-    char cadena[SIZE];
-    int i = 0;
-    int entero = 0;
-    if(!archivo1){
-        printf("Error al abrir el archivo\n");
-    }
-
-    else{
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 
 
-        fclose(archivo1);
-    }
 
-}*/
 typedef struct ciudad {
     char * nombre;
     float pos_x;
@@ -62,109 +45,53 @@ void cargarXUsuario(float temp, TUsuario usuario){
 void cargarYUsuario(float temp, TUsuario usuario){
     usuario->pos_y = temp;
 }
-/*
-int main(){
+
+int main(int argc, char* argv[]){
+    #ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+    #endif
     if (argc != 2){
         printf("error en args");
         exit(1);
     }
-         FILE *archivo = fopen(argv[1],"r");
-
-
-
-    TCiudad ciudades;
-    TUsuario persona;
-    FILE* archivo = fopen("mapa.txt","r");
+    FILE *archivo = fopen(argv[1],"r");
     if (archivo == NULL){
         printf("no se pudo abrir el archivo. \n");
         exit(1);
     }
 
-    char temporal[100];
+    char temporal[32];
     int cont = 0;
-    char aux = '0';
-    float auxFloat = 0;
 
-    while(!feof(archivo)){
-        fgets(temporal,50,archivo);
+
+    while(fgets(temporal,50,archivo)){
         cont++;
     }
 
     rewind(archivo);
 
-    ciudades = (TCiudad) malloc(cont * sizeof(struct ciudad));
-    persona = (TUsuario) malloc (sizeof(struct usuario));
-    if (ciudades == NULL){
-        printf("no pudimos reservar memoria.");
-    }
+    TUsuario usuario1 = (TUsuario) malloc(sizeof(struct usuario));
 
+    fscanf(archivo,"%f;%f\n",&usuario1->pos_x,&usuario1->pos_y);
 
-    auxFloat = fgetc(archivo)-'0';
-    cargarXUsuario(auxFloat, persona);
-    aux = fgetc(archivo);
-    if (aux != ';'){
-        printf("archivo con mal formato");
-        exit(1);
-    }
-    auxFloat = fgetc(archivo)-'0';
-    cargarYUsuario(auxFloat, persona);
-    fgetc(archivo);
-
-    for (int i = 0; aux != '\n' || i<=3; i++){ // contador de numero de ciudad (para cada ciudad se ejecuta este codigo)
-        vaciar(temporal);
-        aux = '0';
-        for(int j = 0; aux != ';'; j++){
-            aux = fgetc(archivo);
-            if (aux != ';'){
-                temporal[j] = aux;
-            }
-        }
-        cargarNombre(temporal, i, ciudades);
-
-        auxFloat = fgetc(archivo) -'0';
-        cargarPosX(auxFloat, i, ciudades);
-
-        aux = fgetc(archivo);
-        if (aux != ';'){
-            printf("archivo con mal formato.\n");
-            exit(1);
-        }
-        auxFloat = fgetc(archivo)-'0';
-        cargarPosY(auxFloat, i, ciudades);
-        aux = fgetc(archivo);
+    TCiudad *arr = (TCiudad*) malloc(cont * sizeof(struct ciudad));
+    for(int i = 0; i<cont;i++){
+        arr[i] = (TCiudad) malloc(sizeof(struct ciudad));
+        char* strCiudad = (char*) malloc(32* sizeof(char));
+        arr[i]->nombre = strCiudad;
+        fscanf(archivo,"%[^;];%f;%f\n",arr[i]->nombre, &arr[i]->pos_x, &arr[i]->pos_y);
     }
     fclose(archivo);
-    for (int iterador = 0; iterador <= 3; iterador++){
-        printf("ciudad %d: %s, posicion: %f %f \n",iterador, ciudades[iterador].nombre, ciudades[iterador].pos_x, ciudades[iterador].pos_y);
-    }
 
 
 
-
-    Tciudad *arr = (Tciudad*) malloc(sizeOf(cont * Tciudad));
-    for(int i = 0; i<cont;i++){
-        arr[i] = (Tciudad) malloc(sizeOf(struct ciudad));
-        fscanf(archivo,"%[^;];%f;%f\n",arr[i]->nombre, &arr[i]->x, &arr[i]->y);
-
-    }
-
-    ciudades = (TCiudad) malloc(sizeof(struct ciudad));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    free(usuario1);
+    free(arr);
+    cp_destruir();
+    /*for (int iterador = 0; iterador <= 3; iterador++){
+        printf("ciudad %d: %s, posicion: %f %f \n",iterador, arr[iterador]->nombre, arr[iterador]->pos_x, arr[iterador]->pos_y);
+    }*/
     return 0;
 }
-*/
+
