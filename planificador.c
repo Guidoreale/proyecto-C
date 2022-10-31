@@ -125,10 +125,7 @@ int main(int argc, char* argv[]){
     free(usuario1);
     free(arr);
 
-    //cp_destruir();
-    /*for (int iterador = 0; iterador <= 3; iterador++){
-        printf("ciudad %d: %s, posicion: %f %f \n",iterador, arr[iterador]->nombre, arr[iterador]->pos_x, arr[iterador]->pos_y);
-    }*/
+
     return 0;
 
 
