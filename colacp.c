@@ -14,7 +14,7 @@ TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
     return nuevo;
 }
 
-TColaCP crearCola(int (*f)(TEntrada, TEntrada)){
+TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada)){
     TColaCP nuevaCola = (TColaCP) malloc(sizeof(struct cola_con_prioridad));
     nuevaCola ->cantidad_elementos = 0;
     nuevaCola ->raiz = NULL;
@@ -252,7 +252,7 @@ void mostrarColaDescendente(TColaCP cola){
     if (cola == NULL){
         exit(CCP_NO_INI);
     }
-    TColaCP nueva = crearCola(ordenDescendente);
+    TColaCP nueva = crear_cola_cp(ordenDescendente);
     while (cola->cantidad_elementos != 0){
         cp_insertar(nueva, cola->raiz->entrada);
         cp_eliminar(cola);
@@ -269,7 +269,7 @@ void mostrarCola(TColaCP cola){
     if (cola == NULL){
         exit(CCP_NO_INI);
     }
-    TColaCP nueva = crearCola(ordenAscendente);
+    TColaCP nueva = crear_cola_cp(ordenAscendente);
     while (cola->cantidad_elementos != 0){
         printf("%s \n", (char*)cola->raiz->entrada->valor);
         cp_insertar(nueva, cola->raiz->entrada);
@@ -282,7 +282,7 @@ void mostrarCola(TColaCP cola){
 int main()
 {
 
-    TColaCP cola = crearCola(ordenAscendente);
+    TColaCP cola = crear_cola_CP(ordenAscendente);
 
     TEntrada arreglo[8];
 

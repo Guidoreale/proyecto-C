@@ -27,11 +27,26 @@ typedef struct cola_con_prioridad {
     int (*comparador)(TEntrada, TEntrada);
 } * TColaCP;
 
+
+typedef struct ciudad {
+    char * nombre;
+    float pos_x;
+    float pos_y;
+} * TCiudad;
+
+typedef struct usuario {
+    float pos_x;
+    float pos_y;
+} * TUsuario;
+
+int ordenAscendente(TEntrada a, TEntrada b);
+int ordenDescendente(TEntrada a, TEntrada b);
 TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada));
 int cp_insertar(TColaCP cola, TEntrada entr);
 int cp_cantidad(TColaCP cola);
 void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) );
 TEntrada cp_eliminar(TColaCP cola);
+void fEliminar(TEntrada entrada);
 
 
 #endif

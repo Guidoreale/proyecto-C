@@ -9,17 +9,6 @@
 
 
 
-typedef struct ciudad {
-    char * nombre;
-    float pos_x;
-    float pos_y;
-} * TCiudad;
-
-typedef struct usuario {
-    float pos_x;
-    float pos_y;
-} * TUsuario;
-
 void vaciar(char temp[]){
     for (int i = 0; i < 50; i++){
         temp[i] = '\0';
@@ -57,17 +46,17 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
         float* prioCiudad;
         for (int i = 0; i < cont; i++){
             TEntrada aCrear = (TEntrada)malloc(sizeof(struct entrada));
-            float* prioCiudad = (float*)malloc(sizeof (float));
+            prioCiudad = (float*)malloc(sizeof (float));
             *prioCiudad = calcularDistancia(arr[i], us);
             aCrear->clave = prioCiudad;
             strcpy(aCrear->valor,arr[i]->nombre);//verificar si reserva memoria
             cp_insertar(nueva, aCrear);
         }
-        int cont = 0;
+        cont = 0;
         while(nueva->cantidad_elementos > 0){
             TEntrada aMostrar = cp_eliminar(nueva);
             cp_eliminar(nueva);
-            printf("Nº%d: %s \n",cont, aMostrar->valor);
+            printf("Nº%d: %s \n",cont, (char *) aMostrar->valor);
             cont++;
         }
         cp_destruir(nueva, fEliminar);
@@ -78,16 +67,16 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
         float* prioCiudad;
         for (int i = 0; i < cont; i++){
             TEntrada aCrear = (TEntrada)malloc(sizeof(struct entrada));
-            float* prioCiudad = (float*)malloc(sizeof (float));
+            prioCiudad = (float*)malloc(sizeof (float));
             *prioCiudad = calcularDistancia(arr[i], us);
             aCrear->clave = prioCiudad;
             strcpy(aCrear->valor,arr[i]->nombre);//verificar si reserva memoria
             cp_insertar(nueva, aCrear);
         }
-        int cont = 0;
+        cont = 0;
         while(nueva->cantidad_elementos > 0){
             TEntrada aMostrar = cp_eliminar(nueva);
-            printf("Nº%d: %s \n",cont, aMostrar->valor);
+            printf("Nº%d: %s \n",cont, (char*) aMostrar->valor);
             cont++;
         }
         cp_destruir(nueva, fEliminar);
@@ -135,6 +124,7 @@ int main(int argc, char* argv[]){
 
     free(usuario1);
     free(arr);
+
     //cp_destruir();
     /*for (int iterador = 0; iterador <= 3; iterador++){
         printf("ciudad %d: %s, posicion: %f %f \n",iterador, arr[iterador]->nombre, arr[iterador]->pos_x, arr[iterador]->pos_y);
