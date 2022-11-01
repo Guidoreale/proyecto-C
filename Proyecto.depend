@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1667286024 source:c:\users\guido\desktop\proyecto1-c\proyecto-orga\colacp.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	"colacp.h"
+
+1667286092 c:\users\guido\desktop\proyecto1-c\proyecto-orga\colacp.h
+
+1667334185 source:c:\users\guido\desktop\proyecto1-c\proyecto-orga\planificador.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	"colacp.h"
+	<windows.h>
+

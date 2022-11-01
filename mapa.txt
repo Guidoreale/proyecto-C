@@ -2,4 +2,4 @@
 Saliqueló;2;2
 Bahía Blanca;4;4
 Trenque Lauquen;4;0
-Carhué;0;3
+Carhué;4;3

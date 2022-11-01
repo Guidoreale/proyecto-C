@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "colacp.h"
 #ifdef _WIN32
 #include <windows.h>
@@ -36,9 +37,9 @@ void cargarYUsuario(float temp, TUsuario usuario){
 }
 
 float calcularDistancia(TCiudad ciudad, TUsuario us){
-    float aRetornar = 0;
-    aRetornar = ((ciudad->pos_x - us->pos_x) +(ciudad->pos_y - us->pos_y));
-    return aRetornar;
+    double aRetornar = 0;
+    aRetornar =  fabs(ciudad->pos_x - us->pos_x) + fabs(ciudad->pos_y - us->pos_y);
+    return (float) aRetornar;
 }
 
 void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
@@ -49,14 +50,14 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             prioCiudad = (float*)malloc(sizeof (float));
             *prioCiudad = calcularDistancia(arr[i], us);
             aCrear->clave = prioCiudad;
+            aCrear->valor = (TValor) malloc(sizeof(char) * (strlen(arr[i]->nombre) + 1));
             strcpy(aCrear->valor,arr[i]->nombre);//verificar si reserva memoria
             cp_insertar(nueva, aCrear);
         }
         cont = 0;
-        while(nueva->cantidad_elementos > 0){
+        while(nueva->cantidad_elementos  > 0){
             TEntrada aMostrar = cp_eliminar(nueva);
-            cp_eliminar(nueva);
-            printf("Nº%d: %s \n",cont, (char *) aMostrar->valor);
+            printf("Nº%d: %s \n",cont, (char *) (aMostrar->valor));
             cont++;
         }
         cp_destruir(nueva, fEliminar);
@@ -70,6 +71,7 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             prioCiudad = (float*)malloc(sizeof (float));
             *prioCiudad = calcularDistancia(arr[i], us);
             aCrear->clave = prioCiudad;
+            aCrear->valor = (TValor) malloc(sizeof(char) * (strlen(arr[i]->nombre) + 1));
             strcpy(aCrear->valor,arr[i]->nombre);//verificar si reserva memoria
             cp_insertar(nueva, aCrear);
         }
@@ -85,14 +87,18 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
     void reducirHorasDeManejo(TCiudad* arr, int cont, TUsuario us){
         float* prioCiudad;
         TColaCP nueva = crear_cola_cp(ordenAscendente);
-       
+
         for (int i = 0; i < cont; i++){
-            
+
+
+
+
             for (int h = i - 1; h < cont; h++){
             TEntrada aCrear = (TEntrada)malloc(sizeof(struct entrada));
             prioCiudad = (float*)malloc(sizeof (float));
             *prioCiudad = calcularDistancia(arr[h], us);
             aCrear->clave = prioCiudad;
+            aCrear->valor = (TValor) malloc(sizeof(char) * (strlen(arr[i]->nombre) + 1));
             strcpy(aCrear->valor,arr[h]->nombre);//verificar si reserva memoria
             cp_insertar(nueva, aCrear);
             }
@@ -102,9 +108,9 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
                     TEntrada aMostrar = cp_eliminar(nueva);
                     printf("ciudad nro %d: %s \n",i, (char*) aMostrar->valor);
                 }
-                else 
+                else
                     cp_eliminar(nueva);
-            }        
+            }
         }
         cp_destruir(nueva, fEliminar);
     }
@@ -148,8 +154,8 @@ int main(int argc, char* argv[]){
     }
     fclose(archivo);
 
-
-
+    //mostrarAscendente(arr, cont - 1, usuario1);
+    reducirHorasDeManejo();
     free(usuario1);
     free(arr);
 

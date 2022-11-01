@@ -137,9 +137,10 @@ TEntrada cp_eliminar(TColaCP cola){
                 cola->raiz->entrada = aEliminar->entrada;
             }
     }
-    free(aEliminar);
+    free(aEliminar);//hacerlo completo 3 free
     cola->cantidad_elementos--;
-    reacomodar(cola->raiz, cola);
+    if(cola!= NULL && cola->cantidad_elementos != 0)
+        reacomodar(cola->raiz, cola);
     return aRetornar;
     }
 

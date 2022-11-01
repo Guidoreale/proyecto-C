@@ -1,0 +1,3 @@
+C:/Users/Guido/Desktop/proyecto1-C/proyecto-orga/build/CMakeFiles/proyecto.dir
+C:/Users/Guido/Desktop/proyecto1-C/proyecto-orga/build/CMakeFiles/edit_cache.dir
+C:/Users/Guido/Desktop/proyecto1-C/proyecto-orga/build/CMakeFiles/rebuild_cache.dir
