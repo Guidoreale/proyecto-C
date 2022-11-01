@@ -82,6 +82,34 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
         cp_destruir(nueva, fEliminar);
     }
 
+    void reducirHorasDeManejo(TCiudad* arr, int cont, TUsuario us){
+        float* prioCiudad;
+        TColaCP nueva = crear_cola_cp(ordenAscendente);
+       
+        for (int i = 0; i < cont; i++){
+            
+            for (int h = i - 1; h < cont; h++){
+            TEntrada aCrear = (TEntrada)malloc(sizeof(struct entrada));
+            prioCiudad = (float*)malloc(sizeof (float));
+            *prioCiudad = calcularDistancia(arr[h], us);
+            aCrear->clave = prioCiudad;
+            strcpy(aCrear->valor,arr[h]->nombre);//verificar si reserva memoria
+            cp_insertar(nueva, aCrear);
+            }
+
+            for (int k = 0; k < cont; k++){
+                if (k == i){
+                    TEntrada aMostrar = cp_eliminar(nueva);
+                    printf("ciudad nro %d: %s \n",i, (char*) aMostrar->valor);
+                }
+                else 
+                    cp_eliminar(nueva);
+            }        
+        }
+        cp_destruir(nueva, fEliminar);
+    }
+
+
 int main(int argc, char* argv[]){
     #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
