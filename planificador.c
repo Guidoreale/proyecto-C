@@ -60,7 +60,7 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             printf("Nº%d: %s \n",cont, (char *) (aMostrar->valor));
             cont++;
         }
-        cp_destruir(nueva, fEliminar);
+        //cp_destruir(nueva, fEliminar);
     }
 
     void mostrarDescendente(TCiudad* arr, int cont, TUsuario us){
@@ -81,7 +81,7 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             printf("Nº%d: %s \n",cont, (char*) aMostrar->valor);
             cont++;
         }
-        cp_destruir(nueva, fEliminar);
+        //cp_destruir(nueva, fEliminar);
     }
 
     TCiudad buscarCiudad(TCiudad*arr, int cont, char* nombre){
@@ -159,8 +159,8 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
         if (restantes > 0) {
             printf("ciudad Numero%d: %s", restantes - cont, (char*)cp_eliminar(nueva)->valor);
         }
-        cp_destruir(nueva,fEliminar);
-        cp_destruir(secundaria, fEliminar);
+        //cp_destruir(nueva,fEliminar);
+        //cp_destruir(secundaria, fEliminar);
     }
 
 
@@ -202,8 +202,31 @@ int main(int argc, char* argv[]){
     }
     fclose(archivo);
 
-    //mostrarAscendente(arr, cont - 1, usuario1);
-    reducirHorasDeManejo(arr, cont, usuario1);
+    printf("Ingrese una accion a realizar:\n");
+    printf("1: Mostrar ascendente\n");
+    printf("2: Mostrar descendente\n");
+    printf("3: Reducir horas de manejo\n");
+    printf("4: Salir\n");
+    int leerNumero;
+    scanf("%i",&leerNumero);
+    switch (leerNumero) {
+        case 1:
+            mostrarAscendente(arr, cont - 1, usuario1);
+            break;
+        case 2:
+            mostrarDescendente(arr, cont - 1, usuario1);
+            break;
+        case 3:
+            reducirHorasDeManejo(arr, cont, usuario1);
+            break;
+        case 4:
+            //cp_destruir(arr,fEliminar);
+            break;
+
+        default:
+            printf("Fuera de rango");
+            break;
+    }
     free(usuario1);
     free(arr);
 

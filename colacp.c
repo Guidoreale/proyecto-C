@@ -127,7 +127,7 @@ TEntrada cp_eliminar(TColaCP cola){
             }
             else {
                 aEliminar = buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)), cola->raiz);
-                if (aEliminar->padre->hijo_izquierdo == aEliminar){//linea que causa error.
+                if (aEliminar->padre->hijo_izquierdo == aEliminar){
                     aEliminar->padre->hijo_izquierdo = NULL;
                 }
                 else{
