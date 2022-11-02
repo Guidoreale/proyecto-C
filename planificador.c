@@ -5,17 +5,12 @@
 #include "colacp.h"
 #ifdef _WIN32
 #include <windows.h>
-
-void actualizarPosicion(int cont, TCiudad const *arr, TUsuario us, int iterador, TCiudad temporal);
-
 #endif
 
 
 
 float calcularDistancia(TCiudad ciudad, TUsuario us){
-    double aRetornar = 0;
-    aRetornar =  fabs(ciudad->pos_x - us->pos_x) + fabs(ciudad->pos_y - us->pos_y);
-    return (float) aRetornar;
+    return fabsf(ciudad->pos_x - us->pos_x) + fabsf(ciudad->pos_y - us->pos_y);
 }
 
 
@@ -33,12 +28,13 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             cp_insertar(nueva, aCrear);
         }
         cont = 0;
+        //TODO cambiar por cp_cantidad
         while(nueva->cantidad_elementos  > 0){
             TEntrada aMostrar = cp_eliminar(nueva);
             printf("Nº%d: %s \n",cont, (char *) (aMostrar->valor));
             cont++;
         }
-        //cp_destruir(nueva, fEliminar);
+        cp_destruir(nueva, fEliminar);
     }
 
     void mostrarDescendente(TCiudad* arr, int cont, TUsuario us){
@@ -59,7 +55,7 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             printf("Nº%d: %s \n",cont, (char*) aMostrar->valor);
             cont++;
         }
-        //cp_destruir(nueva, fEliminar);
+        cp_destruir(nueva, fEliminar);
     }
 
 
@@ -68,6 +64,7 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
         float* prioCiudad;
         TColaCP nueva = crear_cola_cp(ordenAscendente);
         TColaCP secundaria = crear_cola_cp(ordenAscendente);
+        TCiudad c;
         //chequear los malloc
         //cont-1 tiene que ser size
         for (int i = 0; i < cont - 1; i++) {
@@ -79,20 +76,19 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             cp_insertar(nueva, aCrear);
         }
         int restantes = cont -1;
-        int iterador;
 
-        while (restantes >= 1) {
-            iterador = 0;
+        while (restantes > 0) {
             TEntrada temporal;
             temporal = cp_eliminar(nueva);
             restantes--;
-            actualizarPosicion(cont, arr, us, iterador, temporal->valor);
-            printf("ciudad Numero%d: %s \n", restantes - cont, (char*) ((TCiudad)temporal->valor)->nombre);
+            c = (TCiudad) temporal->valor;
+            us->pos_x = c->pos_x;
+            us->pos_y = c->pos_y;
+            printf("ciudad Numero %d: %s \n", cont - 1 - restantes, (char*) ((TCiudad)temporal->valor)->nombre);
 
             while (nueva->cantidad_elementos != 0){
                 temporal = cp_eliminar(nueva);
-                *prioCiudad = calcularDistancia(temporal->valor, us);
-                temporal->clave = prioCiudad;
+                *(float*)temporal->clave = calcularDistancia(temporal->valor, us);
                 cp_insertar(secundaria, temporal);
             }
 
@@ -100,22 +96,9 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             secundaria = nueva;
             nueva = aux;
         }
-        //cp_destruir(nueva,fEliminar);
-        //cp_destruir(secundaria, fEliminar);
+        cp_destruir(nueva,fEliminar);
+        cp_destruir(secundaria, fEliminar);
     }
-
-void actualizarPosicion(int cont, TCiudad const *arr, TUsuario us, int iterador, TCiudad temporal) {
-    int encontre = 0;
-    while (iterador < cont - 1 && !encontre) {
-        if (strcmp(temporal->nombre, arr[iterador]->nombre) == 0) {
-            us->pos_x = arr[iterador]->pos_x;
-            us->pos_y = arr[iterador]->pos_y;
-            encontre = 1;
-        }
-        iterador++;
-    }
-}
-
 
 int main(int argc, char* argv[]){
     #ifdef _WIN32
@@ -173,15 +156,15 @@ int main(int argc, char* argv[]){
             reducirHorasDeManejo(arr, cont, usuario1);
             break;
         case 4:
-            //cp_destruir(arr,fEliminar);
+            //Limpiar ciudades
+            free(usuario1);
+            free(arr);
             break;
 
         default:
             printf("Fuera de rango");
             break;
     }
-    free(usuario1);
-    free(arr);
 
 
     return 0;

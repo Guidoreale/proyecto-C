@@ -154,10 +154,11 @@ void destruirRecursivo(TNodo nodo, void (*fEliminar)(TEntrada)){
 void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
     if (cola == NULL)
         exit(CCP_NO_INI);
-    else
+
+    if(cola->raiz != NULL)
         destruirRecursivo(cola->raiz, fEliminar);
 
-    cola->cantidad_elementos = 0;
+    free(cola);
 
 }
 
