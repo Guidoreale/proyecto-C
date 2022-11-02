@@ -9,33 +9,6 @@
 
 
 
-
-void vaciar(char temp[]){
-    for (int i = 0; i < 50; i++){
-        temp[i] = '\0';
-    }
-}
-
-void cargarNombre(char temp[], int contador, TCiudad arreglo ){
-    int k = strlen(temp) + 1;
-    arreglo[contador].nombre = (char*) malloc (k * sizeof(char));
-    strcpy(arreglo[contador].nombre, temp);
-}
-void cargarPosX(float temp, int contador, TCiudad arreglo){
-    arreglo[contador].pos_x = temp;
-}
-void cargarPosY(float temp, int contador, TCiudad arreglo){
-    arreglo[contador].pos_y = temp;
-}
-
-void cargarXUsuario(float temp, TUsuario usuario){
-    usuario->pos_x = temp;
-}
-
-void cargarYUsuario(float temp, TUsuario usuario){
-    usuario->pos_y = temp;
-}
-
 float calcularDistancia(TCiudad ciudad, TUsuario us){
     double aRetornar = 0;
     aRetornar =  fabs(ciudad->pos_x - us->pos_x) + fabs(ciudad->pos_y - us->pos_y);
@@ -96,7 +69,6 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
     void reducirHorasDeManejo(TCiudad* arr, int cont, TUsuario us){
         float* prioCiudad;
         TCiudad ciudadTemp;
-        ciudadTemp = (TCiudad) malloc(sizeof(struct ciudad));
         TColaCP nueva = crear_cola_cp(ordenAscendente);
         TColaCP secundaria = crear_cola_cp(ordenAscendente);
 
@@ -109,25 +81,26 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             strcpy(aCrear->valor,arr[i]->nombre);
             cp_insertar(nueva, aCrear);
         }
-
-        int restantes = cont ;
+        int encontre = 0;
+        int restantes = cont -1;
         int iterador;
         while (restantes > 1) {
             iterador = 0;
 
-            TEntrada temporal = (TEntrada) malloc(sizeof(struct entrada));
+            TEntrada temporal;
             temporal = cp_eliminar(nueva);
             restantes--;
 
-            while (iterador < cont - 1) {
+            while (iterador < cont - 1 && !encontre) {
                 if (strcmp(temporal->valor, arr[iterador]->nombre) == 0) {
                     us->pos_x = arr[iterador]->pos_x;
                     us->pos_y = arr[iterador]->pos_y;
+                    encontre = 1;
                 }
                 iterador++;
             }
             printf("ciudad Numero%d: %s \n", restantes - cont, (char*)temporal->valor);
-
+            encontre = 0;
             while (nueva->cantidad_elementos != 0){
                 temporal = cp_eliminar(nueva);
                 ciudadTemp = buscarCiudad(arr, cont, temporal->valor);
@@ -139,10 +112,11 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             iterador = 0;
             temporal = cp_eliminar(secundaria);
             restantes--;
-            while (iterador < cont - 1) {
+            while (iterador < cont - 1 && !encontre) {
                 if (strcmp(temporal->valor, arr[iterador]->nombre) == 0) {
                     us->pos_x = arr[iterador]->pos_x;
                     us->pos_y = arr[iterador]->pos_y;
+                    encontre = 1;
                 }
                 iterador++;
             }

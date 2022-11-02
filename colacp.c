@@ -80,10 +80,12 @@ void reacomodar(TNodo nodo, TColaCP cola){
         exit(CCP_NO_INI);
     }
     if (nodo->hijo_izquierdo != NULL) {
-        if (nodo->hijo_derecho == NULL || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == 0 || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == -1) {
-            temp = nodo->hijo_izquierdo->entrada;
-            nodo->hijo_izquierdo->entrada = nodo->entrada;
-            nodo->entrada = temp;
+        if ((nodo->hijo_derecho == NULL) || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == 0 || cola->comparador(nodo->hijo_izquierdo->entrada, nodo->hijo_derecho->entrada) == -1) {
+            if(cola->comparador(nodo->hijo_izquierdo->entrada,nodo->entrada) == -1){
+                temp = nodo->hijo_izquierdo->entrada;
+                nodo->hijo_izquierdo->entrada = nodo->entrada;
+                nodo->entrada = temp;
+            }
             reacomodar(nodo->hijo_izquierdo, cola);
         }
         else {
@@ -137,7 +139,7 @@ TEntrada cp_eliminar(TColaCP cola){
                 cola->raiz->entrada = aEliminar->entrada;
             }
     }
-    free(aEliminar);//hacerlo completo 3 free
+    free(aEliminar);
     cola->cantidad_elementos--;
     if(cola!= NULL && cola->cantidad_elementos != 0)
         reacomodar(cola->raiz, cola);
@@ -171,7 +173,7 @@ void reacomodarInsercion(TNodo nodo,TColaCP cola) {
         aux = nodo->entrada;
         nodo->entrada = nodo->padre->entrada;
         nodo->padre->entrada = aux;
-        reacomodarInsercion(nodo, cola);
+        reacomodarInsercion(nodo->padre, cola);
     }
 }
 
