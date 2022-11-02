@@ -23,14 +23,8 @@ TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada)){
         nuevaCola ->cantidad_elementos = 0;
         nuevaCola ->raiz = NULL;
         nuevaCola ->comparador = (*f);
+    }
         return nuevaCola;
-    }
-    else{
-        exit(CCP_NO_INI);
-    }
-
-
-
 }
 
 
@@ -195,18 +189,18 @@ int insertarPerfecto(TEntrada aInsertar,TColaCP cola){
         return TRUE;
     }
     else{
-        exit(CCP_NO_INI);
+        return FALSE;
     }
 }
 
-int buscar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
+int buscarEInsertar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
     int nivel_actual = nivel; // empieza en 1, la vuelta del derecho entra con nivel_actual = 2
     int retorno = FALSE;
     if (nivel_actual < logaritmo(cola->cantidad_elementos)){ //logaritmo en base 2 de los elementos
         nivel_actual++;
-        retorno = buscar(nivel_actual, aInsertar, nodo->hijo_izquierdo, cola);
+        retorno = buscarEInsertar(nivel_actual, aInsertar, nodo->hijo_izquierdo, cola);
         if (!retorno)
-            retorno = buscar(nivel_actual, aInsertar, nodo->hijo_derecho, cola);
+            retorno = buscarEInsertar(nivel_actual, aInsertar, nodo->hijo_derecho, cola);
     }
     else {
         if (nodo->hijo_izquierdo == NULL) {
@@ -231,6 +225,9 @@ int buscar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){
 
 int cp_insertar(TColaCP cola, TEntrada aInsertar){
     int aRetornar = FALSE;
+    if(cola==NULL){
+        exit(CCP_NO_INI);
+    }
     if (cola-> cantidad_elementos == 0){
         TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
         if(nuevo!=NULL){
@@ -243,7 +240,7 @@ int cp_insertar(TColaCP cola, TEntrada aInsertar){
             aRetornar = TRUE;
         }
         else{
-            exit(CCP_NO_INI);
+            return FALSE;
         }
     }
     else
@@ -251,7 +248,7 @@ int cp_insertar(TColaCP cola, TEntrada aInsertar){
             aRetornar= insertarPerfecto(aInsertar,cola);
         }
         else
-            aRetornar = buscar(1,aInsertar, cola->raiz,cola);
+            aRetornar = buscarEInsertar(1, aInsertar, cola->raiz, cola);
 
 
     return aRetornar;
@@ -259,46 +256,8 @@ int cp_insertar(TColaCP cola, TEntrada aInsertar){
 
 
 
-int printearPreorden(TColaCP cola, TNodo raiz){
-        if (cola->cantidad_elementos == 0){
-            printf("cola con 0 elementos");
-            return 0;
-        }
-        printf("clave = %d \n", *((int*)raiz->entrada->clave));
-        if (raiz->hijo_izquierdo != NULL)
-            printearPreorden(cola, raiz->hijo_izquierdo);
-        if (raiz->hijo_derecho != NULL)
-            printearPreorden(cola, raiz->hijo_derecho);
-    return TRUE;
-}
 
-void mostrarColaDescendente(TColaCP cola){
-    if (cola == NULL){
-        exit(CCP_NO_INI);
-    }
-    TColaCP nueva = crear_cola_cp(ordenDescendente);
-    while (cola->cantidad_elementos != 0){
-        cp_insertar(nueva, cola->raiz->entrada);
-        cp_eliminar(cola);
-    }
-    while (nueva->cantidad_elementos != 0){
-        printf("%s \n", (char*)nueva->raiz->entrada->valor);
-        cp_insertar(cola, cola->raiz->entrada);
-        cp_eliminar(nueva);
-    }
-    nueva = NULL;
-}
 
-void mostrarCola(TColaCP cola){
-    if (cola == NULL){
-        exit(CCP_NO_INI);
-    }
-    TColaCP nueva = crear_cola_cp(ordenAscendente);
-    while (cola->cantidad_elementos != 0){
-        printf("%s \n", (char*)cola->raiz->entrada->valor);
-        cp_insertar(nueva, cola->raiz->entrada);
-        cp_eliminar(cola);
-    }
-    cola = nueva;
-    nueva = NULL;
-}
+
+
+

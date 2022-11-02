@@ -5,6 +5,9 @@
 #include "colacp.h"
 #ifdef _WIN32
 #include <windows.h>
+
+void actualizarPosicion(int cont, TCiudad const *arr, TUsuario us, int iterador, TCiudad temporal);
+
 #endif
 
 
@@ -14,6 +17,8 @@ float calcularDistancia(TCiudad ciudad, TUsuario us){
     aRetornar =  fabs(ciudad->pos_x - us->pos_x) + fabs(ciudad->pos_y - us->pos_y);
     return (float) aRetornar;
 }
+
+
 
 void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
         TColaCP nueva = crear_cola_cp(ordenAscendente);
@@ -57,85 +62,59 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
         //cp_destruir(nueva, fEliminar);
     }
 
-    TCiudad buscarCiudad(TCiudad*arr, int cont, char* nombre){
-        TCiudad aRetornar;
-        for (int i = 0; i < cont - 1; i++)
-            if (strcmp(nombre, arr[i]->nombre) == 0)
-                aRetornar = arr[i];
 
-        return aRetornar;
-    }
 
     void reducirHorasDeManejo(TCiudad* arr, int cont, TUsuario us){
         float* prioCiudad;
-        TCiudad ciudadTemp;
         TColaCP nueva = crear_cola_cp(ordenAscendente);
         TColaCP secundaria = crear_cola_cp(ordenAscendente);
-
+        //chequear los malloc
+        //cont-1 tiene que ser size
         for (int i = 0; i < cont - 1; i++) {
             TEntrada aCrear = (TEntrada) malloc(sizeof(struct entrada));
             prioCiudad = (float *) malloc(sizeof(float));
             *prioCiudad = calcularDistancia(arr[i], us);
             aCrear->clave = prioCiudad;
-            aCrear->valor = (TValor) malloc(sizeof(char) * (strlen(arr[i]->nombre) + 1));
-            strcpy(aCrear->valor,arr[i]->nombre);
+            aCrear->valor = arr[i];
             cp_insertar(nueva, aCrear);
         }
-        int encontre = 0;
         int restantes = cont -1;
         int iterador;
-        while (restantes > 1) {
-            iterador = 0;
 
+        while (restantes >= 1) {
+            iterador = 0;
             TEntrada temporal;
             temporal = cp_eliminar(nueva);
             restantes--;
+            actualizarPosicion(cont, arr, us, iterador, temporal->valor);
+            printf("ciudad Numero%d: %s \n", restantes - cont, (char*) ((TCiudad)temporal->valor)->nombre);
 
-            while (iterador < cont - 1 && !encontre) {
-                if (strcmp(temporal->valor, arr[iterador]->nombre) == 0) {
-                    us->pos_x = arr[iterador]->pos_x;
-                    us->pos_y = arr[iterador]->pos_y;
-                    encontre = 1;
-                }
-                iterador++;
-            }
-            printf("ciudad Numero%d: %s \n", restantes - cont, (char*)temporal->valor);
-            encontre = 0;
             while (nueva->cantidad_elementos != 0){
                 temporal = cp_eliminar(nueva);
-                ciudadTemp = buscarCiudad(arr, cont, temporal->valor);
-                *prioCiudad = calcularDistancia(ciudadTemp, us);
+                *prioCiudad = calcularDistancia(temporal->valor, us);
                 temporal->clave = prioCiudad;
                 cp_insertar(secundaria, temporal);
             }
 
-            iterador = 0;
-            temporal = cp_eliminar(secundaria);
-            restantes--;
-            while (iterador < cont - 1 && !encontre) {
-                if (strcmp(temporal->valor, arr[iterador]->nombre) == 0) {
-                    us->pos_x = arr[iterador]->pos_x;
-                    us->pos_y = arr[iterador]->pos_y;
-                    encontre = 1;
-                }
-                iterador++;
-            }
-            printf("ciudad Numero%d: %s \n", restantes - cont, (char*)temporal->valor);
-
-            while (secundaria->cantidad_elementos != 0){
-                temporal = cp_eliminar(secundaria);
-                ciudadTemp = buscarCiudad(arr, cont, temporal->valor);
-                *prioCiudad = calcularDistancia(ciudadTemp, us);
-                temporal->clave = prioCiudad;
-                cp_insertar(nueva, temporal);
-            }
-        }
-        if (restantes > 0) {
-            printf("ciudad Numero%d: %s", restantes - cont, (char*)cp_eliminar(nueva)->valor);
+            TColaCP aux = secundaria;
+            secundaria = nueva;
+            nueva = aux;
         }
         //cp_destruir(nueva,fEliminar);
         //cp_destruir(secundaria, fEliminar);
     }
+
+void actualizarPosicion(int cont, TCiudad const *arr, TUsuario us, int iterador, TCiudad temporal) {
+    int encontre = 0;
+    while (iterador < cont - 1 && !encontre) {
+        if (strcmp(temporal->nombre, arr[iterador]->nombre) == 0) {
+            us->pos_x = arr[iterador]->pos_x;
+            us->pos_y = arr[iterador]->pos_y;
+            encontre = 1;
+        }
+        iterador++;
+    }
+}
 
 
 int main(int argc, char* argv[]){
