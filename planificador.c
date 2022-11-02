@@ -51,7 +51,7 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             *prioCiudad = calcularDistancia(arr[i], us);
             aCrear->clave = prioCiudad;
             aCrear->valor = (TValor) malloc(sizeof(char) * (strlen(arr[i]->nombre) + 1));
-            strcpy(aCrear->valor,arr[i]->nombre);//verificar si reserva memoria
+            strcpy(aCrear->valor,arr[i]->nombre);
             cp_insertar(nueva, aCrear);
         }
         cont = 0;
@@ -72,7 +72,7 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
             *prioCiudad = calcularDistancia(arr[i], us);
             aCrear->clave = prioCiudad;
             aCrear->valor = (TValor) malloc(sizeof(char) * (strlen(arr[i]->nombre) + 1));
-            strcpy(aCrear->valor,arr[i]->nombre);//verificar si reserva memoria
+            strcpy(aCrear->valor,arr[i]->nombre);
             cp_insertar(nueva, aCrear);
         }
         cont = 0;
@@ -84,35 +84,83 @@ void mostrarAscendente(TCiudad* arr, int cont, TUsuario us){
         cp_destruir(nueva, fEliminar);
     }
 
+    TCiudad buscarCiudad(TCiudad*arr, int cont, char* nombre){
+        TCiudad aRetornar;
+        for (int i = 0; i < cont - 1; i++)
+            if (strcmp(nombre, arr[i]->nombre) == 0)
+                aRetornar = arr[i];
+
+        return aRetornar;
+    }
+
     void reducirHorasDeManejo(TCiudad* arr, int cont, TUsuario us){
         float* prioCiudad;
+        TCiudad ciudadTemp;
+        ciudadTemp = (TCiudad) malloc(sizeof(struct ciudad));
         TColaCP nueva = crear_cola_cp(ordenAscendente);
+        TColaCP secundaria = crear_cola_cp(ordenAscendente);
 
-        for (int i = 0; i < cont; i++){
-
-
-
-
-            for (int h = i - 1; h < cont; h++){
-            TEntrada aCrear = (TEntrada)malloc(sizeof(struct entrada));
-            prioCiudad = (float*)malloc(sizeof (float));
-            *prioCiudad = calcularDistancia(arr[h], us);
+        for (int i = 0; i < cont - 1; i++) {
+            TEntrada aCrear = (TEntrada) malloc(sizeof(struct entrada));
+            prioCiudad = (float *) malloc(sizeof(float));
+            *prioCiudad = calcularDistancia(arr[i], us);
             aCrear->clave = prioCiudad;
             aCrear->valor = (TValor) malloc(sizeof(char) * (strlen(arr[i]->nombre) + 1));
-            strcpy(aCrear->valor,arr[h]->nombre);//verificar si reserva memoria
+            strcpy(aCrear->valor,arr[i]->nombre);
             cp_insertar(nueva, aCrear);
+        }
+
+        int restantes = cont ;
+        int iterador;
+        while (restantes > 1) {
+            iterador = 0;
+
+            TEntrada temporal = (TEntrada) malloc(sizeof(struct entrada));
+            temporal = cp_eliminar(nueva);
+            restantes--;
+
+            while (iterador < cont - 1) {
+                if (strcmp(temporal->valor, arr[iterador]->nombre) == 0) {
+                    us->pos_x = arr[iterador]->pos_x;
+                    us->pos_y = arr[iterador]->pos_y;
+                }
+                iterador++;
+            }
+            printf("ciudad Numero%d: %s \n", restantes - cont, (char*)temporal->valor);
+
+            while (nueva->cantidad_elementos != 0){
+                temporal = cp_eliminar(nueva);
+                ciudadTemp = buscarCiudad(arr, cont, temporal->valor);
+                *prioCiudad = calcularDistancia(ciudadTemp, us);
+                temporal->clave = prioCiudad;
+                cp_insertar(secundaria, temporal);
             }
 
-            for (int k = 0; k < cont; k++){
-                if (k == i){
-                    TEntrada aMostrar = cp_eliminar(nueva);
-                    printf("ciudad nro %d: %s \n",i, (char*) aMostrar->valor);
+            iterador = 0;
+            temporal = cp_eliminar(secundaria);
+            restantes--;
+            while (iterador < cont - 1) {
+                if (strcmp(temporal->valor, arr[iterador]->nombre) == 0) {
+                    us->pos_x = arr[iterador]->pos_x;
+                    us->pos_y = arr[iterador]->pos_y;
                 }
-                else
-                    cp_eliminar(nueva);
+                iterador++;
+            }
+            printf("ciudad Numero%d: %s \n", restantes - cont, (char*)temporal->valor);
+
+            while (secundaria->cantidad_elementos != 0){
+                temporal = cp_eliminar(secundaria);
+                ciudadTemp = buscarCiudad(arr, cont, temporal->valor);
+                *prioCiudad = calcularDistancia(ciudadTemp, us);
+                temporal->clave = prioCiudad;
+                cp_insertar(nueva, temporal);
             }
         }
-        cp_destruir(nueva, fEliminar);
+        if (restantes > 0) {
+            printf("ciudad Numero%d: %s", restantes - cont, (char*)cp_eliminar(nueva)->valor);
+        }
+        cp_destruir(nueva,fEliminar);
+        cp_destruir(secundaria, fEliminar);
     }
 
 
@@ -155,7 +203,7 @@ int main(int argc, char* argv[]){
     fclose(archivo);
 
     //mostrarAscendente(arr, cont - 1, usuario1);
-    reducirHorasDeManejo();
+    reducirHorasDeManejo(arr, cont, usuario1);
     free(usuario1);
     free(arr);
 
