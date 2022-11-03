@@ -12,11 +12,9 @@ TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
         nuevo->hijo_derecho = POS_NULA;
         nuevo->hijo_izquierdo = POS_NULA;
         nuevo->padre = padre;
-        return nuevo;    // devolvemos el nuevo nodo creado, con sus respectivas referencias al padre y sus hijos, y añadimos una entrada
+
     }
-    else
-        return NULL;
-     // si el malloc falla, devolvera nulo.
+        return nuevo;// de ser creado devolvemos el nuevo nodo creado, con sus respectivas referencias al padre y sus hijos, y añadimos una entrada
 }
 
 TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada)){//Crea cola con llamada a funcion de comparador
