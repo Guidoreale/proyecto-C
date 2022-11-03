@@ -3,3 +3,7 @@ Saliqueló;2;2
 Bahía Blanca;4;4
 Trenque Lauquen;4;0
 Carhué;0;3
+Buenos Aires;3;4
+Macedonia;12;6
+Ituizangó;4;61
+Neuquen;41;52
