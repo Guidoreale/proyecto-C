@@ -131,6 +131,7 @@ int main(int argc, char* argv[]){
         cantLineas++;
     }//se lee el archivo y se almacenan la cantidad de filas(1 de la posicion del usuario y el resto ciudades)
 
+
     rewind(archivo);
 
     TUsuario usuario1 = (TUsuario) malloc(sizeof(struct usuario));
@@ -148,8 +149,12 @@ int main(int argc, char* argv[]){
     size = cantLineas - 1; //se guarda la cantidad de ciudades
     fclose(archivo);
 
-
     int leerNumero = 0;
+
+    if (cantLineas == 1 || cantLineas == 0){
+        printf("no hay ciudades para recorrer.");
+        exit(1);
+    }
     while(leerNumero!=4){
         printf("Ingrese una accion a realizar:\n");
         printf("1: Mostrar ascendente\n");
