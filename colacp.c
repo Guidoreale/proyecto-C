@@ -68,7 +68,7 @@ TNodo BuscarEliminarPerfecto(TColaCP cola){ //En caso de que el arbol sea perfec
     return iterador;
 }
 
-void reacomodarPostEliminación(TNodo nodo, TColaCP cola){ //Reacomoda el arbol una vez eliminado un nodo
+void reacomodarPostEliminacion(TNodo nodo, TColaCP cola){ //Reacomoda el arbol una vez eliminado un nodo
     TEntrada temp = NULL;
     if (cola->cantidad_elementos == 0){
         exit(CCP_NO_INI);
@@ -80,13 +80,13 @@ void reacomodarPostEliminación(TNodo nodo, TColaCP cola){ //Reacomoda el arbol 
                 nodo->hijo_izquierdo->entrada = nodo->entrada;
                 nodo->entrada = temp;
             }
-            reacomodarPostEliminación(nodo->hijo_izquierdo, cola);
+            reacomodarPostEliminacion(nodo->hijo_izquierdo, cola);
         }
         else {
             temp = nodo->hijo_derecho->entrada;
             nodo->hijo_derecho->entrada = nodo->entrada;
             nodo->entrada = temp;
-            reacomodarPostEliminación(nodo->hijo_derecho, cola);
+            reacomodarPostEliminacion(nodo->hijo_derecho, cola);
         }
     }
 }
@@ -136,7 +136,7 @@ TEntrada cp_eliminar(TColaCP cola){// se elimina un nodo de la cola
     free(aEliminar);
     cola->cantidad_elementos--;
     if(cola!= NULL && cola->cantidad_elementos != 0)
-        reacomodarPostEliminación(cola->raiz, cola); //se reacomoda la cola luego de la eliminacion
+        reacomodarPostEliminacion(cola->raiz, cola); //se reacomoda la cola luego de la eliminacion
     return aRetornar;
     }
 

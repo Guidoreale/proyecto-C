@@ -153,7 +153,7 @@ int main(int argc, char* argv[]){
 
     if (cantLineas == 1 || cantLineas == 0){
         printf("no hay ciudades para recorrer.");
-        exit(1);
+        exit(0);
     }
     while(leerNumero!=4){
         printf("Ingrese una accion a realizar:\n");

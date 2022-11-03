@@ -15,7 +15,7 @@
 	"colacp.h"
 	<windows.h>
 
-1667366958 source:c:\users\guido\desktop\proyecto_c\proyecto-orga\colacp.c
+1667508630 source:c:\users\guido\desktop\proyecto_c\proyecto-orga\colacp.c
 	<stdio.h>
 	<stdlib.h>
 	<math.h>
@@ -23,7 +23,7 @@
 
 1667362454 c:\users\guido\desktop\proyecto_c\proyecto-orga\colacp.h
 
-1667368180 source:c:\users\guido\desktop\proyecto_c\proyecto-orga\planificador.c
+1667507915 source:c:\users\guido\desktop\proyecto_c\proyecto-orga\planificador.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
