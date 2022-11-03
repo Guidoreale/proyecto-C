@@ -6,7 +6,7 @@
 
 
 TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
-    TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));//Reservamos memoria del nodo correspondiente a crear
+    TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
     if(nuevo!=NULL) {
         nuevo->entrada = aInsertar;
         nuevo->hijo_derecho = POS_NULA;
@@ -14,11 +14,11 @@ TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
         nuevo->padre = padre;
 
     }
-        return nuevo;// de ser creado devolvemos el nuevo nodo creado, con sus respectivas referencias al padre y sus hijos, y añadimos una entrada
+        return nuevo;
 }
 
-TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada)){//Crea cola con llamada a funcion de comparador
-    TColaCP nuevaCola = (TColaCP) malloc(sizeof(struct cola_con_prioridad)); //reservamos memoria de la respectiva cola
+TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada)){//se crea una cola vacia con su respectivo comparador
+    TColaCP nuevaCola = (TColaCP) malloc(sizeof(struct cola_con_prioridad));
     if(nuevaCola!=NULL){
         nuevaCola ->cantidad_elementos = 0;
         nuevaCola ->raiz = NULL;
@@ -28,7 +28,7 @@ TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada)){//Crea cola con llamada a fu
 }
 
 
-int ordenAscendente(TEntrada a, TEntrada b){
+int ordenAscendente(TEntrada a, TEntrada b){ // comparador que ordena los elementos en forma ascendente
     if (*((float*)a->clave) < *((float*)b->clave))
         return -1;
     else if(*((float*)a->clave) > *((float*)b->clave))
@@ -37,7 +37,7 @@ int ordenAscendente(TEntrada a, TEntrada b){
         return 0;
     }
 
-int ordenDescendente(TEntrada a, TEntrada b){
+int ordenDescendente(TEntrada a, TEntrada b){// comparador que ordena los elementos de una cola en forma descendente
     if (*((float*)a->clave) > *((float*)b->clave))
         return -1;
     else if(*((float*)a->clave) < *((float*)b->clave))
@@ -50,7 +50,7 @@ int cp_cantidad(TColaCP cola){
     return cola->cantidad_elementos;
 }
 
-void fEliminar(TEntrada entrada){//Liberamos memoria de las claves, valores y luego de sus entradas
+void fEliminar(TEntrada entrada){//se libera completamente la memoria reservada para una entrada
     free(entrada->clave);
     free(entrada->valor);
     free(entrada);
@@ -61,7 +61,7 @@ int logaritmo(int numero){ //computa al logaritmo sin decimales (int)
     return ret;
 }
 
-TNodo BuscarEliminarPerfecto(TColaCP cola){ //En caso de que el arbol sea perfecto buscar el ultimo elemento insertado en el ultimo nodo a la derecha
+TNodo BuscarEliminarPerfecto(TColaCP cola){ //En caso de que el arbol sea perfecto, se busca solo hacia la derecha el ultimo nodo insertado
     TNodo iterador = cola->raiz;
     while (iterador->hijo_derecho != NULL)
         iterador = iterador->hijo_derecho;
@@ -91,7 +91,7 @@ void reacomodarPostEliminación(TNodo nodo, TColaCP cola){ //Reacomoda el arbol 
     }
 }
 
-TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo,TNodo actual){ //En caso de que el arbol no sea perfecto, se utiliza este procedimiento
+TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo,TNodo actual){ //En caso de que el arbol no sea perfecto, se utiliza esta funcion para encontrar el ultimo nodo insertado
     TNodo aRetornar = actual;
     if (nivel == nivelMaximo)
         aRetornar = nodo;
@@ -102,7 +102,7 @@ TNodo buscarEliminable(TNodo nodo, int nivel, int nivelMaximo,TNodo actual){ //E
     return aRetornar;
 }
 
-TEntrada cp_eliminar(TColaCP cola){
+TEntrada cp_eliminar(TColaCP cola){// se elimina un nodo de la cola
     TEntrada aRetornar  = cola->raiz->entrada;
     TNodo aEliminar = NULL;
     if (cola == NULL){ //Caso cola nula
@@ -116,15 +116,15 @@ TEntrada cp_eliminar(TColaCP cola){
             aEliminar = cola->raiz;
             cola->raiz = NULL;
         }
-            else {
-                if (cola->cantidad_elementos == pow(2, (logaritmo(cola->cantidad_elementos) + 1)) - 1) { //Caso en el que el arbol sea perfecto
+            else {//Caso en el que el arbol sea perfecto
+                if (cola->cantidad_elementos == pow(2, (logaritmo(cola->cantidad_elementos) + 1)) - 1) {
                     aEliminar = BuscarEliminarPerfecto(cola);
                     aEliminar->padre->hijo_derecho = NULL;
             }
-            else {
-                aEliminar = buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)), cola->raiz);//Caso en el que el arbol NO sea perfecto
+            else {//Caso en el que el arbol NO sea perfecto
+                aEliminar = buscarEliminable(cola->raiz, 0, (logaritmo(cola->cantidad_elementos)), cola->raiz);
                 if (aEliminar->padre->hijo_izquierdo == aEliminar){
-                    aEliminar->padre->hijo_izquierdo = NULL;//Eliminamos referencias
+                    aEliminar->padre->hijo_izquierdo = NULL;
                 }
                 else{
                     aEliminar->padre->hijo_derecho = NULL;
@@ -133,32 +133,32 @@ TEntrada cp_eliminar(TColaCP cola){
                 cola->raiz->entrada = aEliminar->entrada;
             }
     }
-    free(aEliminar);//Liberamos memoria del nodo
-    cola->cantidad_elementos--;//Reducimos la cantidad de elementos del arbol luego de eliminar el nodo raiz
+    free(aEliminar);
+    cola->cantidad_elementos--;
     if(cola!= NULL && cola->cantidad_elementos != 0)
-        reacomodarPostEliminación(cola->raiz, cola); //Inicia el reacomodo post eliminacion
+        reacomodarPostEliminación(cola->raiz, cola); //se reacomoda la cola luego de la eliminacion
     return aRetornar;
     }
 
 
-void destruirRecursivo(TNodo nodo, void (*fEliminar)(TEntrada)){ //Destruye recursivamente las entradas y el nodo en cuestion, en POSTORDEN(primero se visitan los hijos y por ultimo la raiz)  ya que es el recorrido idoneo para liberar la memoria de un arbol.
+void destruirRecursivo(TNodo nodo, void (*fEliminar)(TEntrada)){ //Destruye recursivamente las entradas y los nodos de una cola
     if(nodo->hijo_izquierdo!=NULL)
         destruirRecursivo(nodo->hijo_izquierdo,fEliminar);
 
     if(nodo->hijo_derecho!=NULL)
         destruirRecursivo(nodo->hijo_derecho,fEliminar);
-    fEliminar(nodo->entrada);//llamada a funcion fEliminar, elimina clave, valor y entrada del nodo
+    fEliminar(nodo->entrada);
     free(nodo);
 }
 
-void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){
+void cp_destruir(TColaCP cola, void (*fEliminar)(TEntrada) ){//destruye totalmente la memoria reservada para una cola
     if (cola == NULL)//En caso de que la cola sea nula
         exit(CCP_NO_INI);
 
     if(cola->raiz != NULL)
-        destruirRecursivo(cola->raiz, fEliminar);//Se liberara recursivamente a los nodos y sus respectivas entradas
+        destruirRecursivo(cola->raiz, fEliminar);
 
-    free(cola);//Por ultimo liberamos memoria de la cola
+    free(cola);
 
 }
 
@@ -178,7 +178,7 @@ int insertarPerfecto(TEntrada aInsertar,TColaCP cola){ //Inserta nodo en caso de
     while(temp->hijo_izquierdo != NULL){ //Buscamos la posicion a insertar, siempre en un arbol perfecto es un recorrido iterativo a izquierda
         temp = temp->hijo_izquierdo;
     }
-    TNodo nuevo = (TNodo) malloc(sizeof(struct nodo)); //reservamos la respectiva memoria de un nodo
+    TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
     if(nuevo!=NULL){
         nuevo->entrada = aInsertar;
         temp->hijo_izquierdo = nuevo;
@@ -186,7 +186,7 @@ int insertarPerfecto(TEntrada aInsertar,TColaCP cola){ //Inserta nodo en caso de
         cola->cantidad_elementos++;
         nuevo->hijo_derecho = NULL;
         nuevo->hijo_izquierdo = NULL;
-        reacomodarInsercion(nuevo, cola);//Reacomodamos una vez realizadas las referencias del nodo insertado
+        reacomodarInsercion(nuevo, cola);//se reacomoda la cola luego de la insercion
         return TRUE;
     }
     else{
@@ -194,12 +194,12 @@ int insertarPerfecto(TEntrada aInsertar,TColaCP cola){ //Inserta nodo en caso de
     }
 }
 
-int buscarEInsertar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){ //Insercion en caso de que el arbol NO sea perfecto
+int buscarEInsertar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){ //busqueda e insercion en caso de que el arbol NO sea perfecto
     int nivel_actual = nivel; // empezará en 1 el nivel
     int retorno = FALSE;
-    if (nivel_actual < logaritmo(cola->cantidad_elementos)){ //logaritmo en base 2 de los elementos, nos devuelve el último nivel
+    if (nivel_actual < logaritmo(cola->cantidad_elementos)){ //recorremos recursivamente hasta encontrar el anteúltimo nivel
         nivel_actual++;
-        retorno = buscarEInsertar(nivel_actual, aInsertar, nodo->hijo_izquierdo, cola);//recorremos recursivamente hasta encontrar el anteúltimo nivel
+        retorno = buscarEInsertar(nivel_actual, aInsertar, nodo->hijo_izquierdo, cola);
         if (!retorno)
             retorno = buscarEInsertar(nivel_actual, aInsertar, nodo->hijo_derecho, cola);
     }
@@ -224,13 +224,13 @@ int buscarEInsertar(int nivel, TEntrada aInsertar, TNodo nodo , TColaCP cola){ /
 
 
 
-int cp_insertar(TColaCP cola, TEntrada aInsertar){
+int cp_insertar(TColaCP cola, TEntrada aInsertar){//inserta un nodo en una cola
     int aRetornar = FALSE;
     if(cola==NULL){ //Caso cola nula
         exit(CCP_NO_INI);
     }
-    if (cola-> cantidad_elementos == 0){ //caso en que la cola este vacia
-        TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));//Reservamos memoria para el nodo
+    if (cola-> cantidad_elementos == 0){
+        TNodo nuevo = (TNodo) malloc(sizeof(struct nodo));
         if(nuevo!=NULL){
             nuevo->entrada = aInsertar;
             cola ->raiz = nuevo;
