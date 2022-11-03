@@ -17,8 +17,8 @@ TNodo crear_nodo(TEntrada aInsertar, TNodo padre) {
     return nuevo; // si el malloc falla, devolvera nulo.
 }
 
-TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada)){
-    TColaCP nuevaCola = (TColaCP) malloc(sizeof(struct cola_con_prioridad));
+TColaCP crear_cola_cp(int (*f)(TEntrada, TEntrada)){//Crea cola con llamada a funcion de comparador
+    TColaCP nuevaCola = (TColaCP) malloc(sizeof(struct cola_con_prioridad)); //reservamos memoria de la respectiva cola
     if(nuevaCola!=NULL){
         nuevaCola ->cantidad_elementos = 0;
         nuevaCola ->raiz = NULL;
